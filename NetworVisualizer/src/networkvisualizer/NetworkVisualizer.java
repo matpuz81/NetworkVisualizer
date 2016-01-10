@@ -11,7 +11,7 @@ import javax.swing.JFrame;
  *
  * @author chef
  */
-public class NetworVisualizer {
+public class NetworkVisualizer {
 
     /**
      * @param args the command line arguments

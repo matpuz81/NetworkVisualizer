@@ -6,9 +6,7 @@
 package networkvisualizer;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.util.LinkedList;
 
 /**
@@ -20,9 +18,6 @@ public class Node {
     double angle,distance;
     double minAngle=0, maxAngle=360;
     String label;
-   // Node parent;
-    boolean showPossibleNodes=false;
-    Node possibleChild;
     int size;
     Color color=Color.red;
     LinkedList<Node>nodes = new LinkedList(); // nodes[0] is parent
@@ -32,6 +27,7 @@ public class Node {
         this.x=p.x;
         this.y=p.y;
         this.label=label;
+        nodes.add(null);
         update(size);
     }
     
@@ -51,7 +47,7 @@ public class Node {
     {
         this.size=size;
         
-        if(nodes.isEmpty())
+        if(nodes.getFirst()==null)  //is a parent 
         {
             
         }
@@ -63,6 +59,11 @@ public class Node {
 
     }
     
+    public void setParams(String label)
+    {
+        this.label=label;
+    }
+    
     public int getNodeDistance()
     {
         return size * 5;
@@ -71,27 +72,5 @@ public class Node {
     public Point getPosition(int nodeDistance)
     {
         return new Point(x,y);
-    }
-    /*
-    public LinkedList<Integer> getPossibleNodes()
-    {
-        LinkedList<Integer> l = new LinkedList();
-        for(int a = minAngle; a <= maxAngle; a += 60)
-        {
-            l.add(a);
-        }
-        return l;
-    }*/
-    
-    public void removePossibleChild()
-    {
-        possibleChild=null;
-    }
-    
-    public void setPossibleChild(int angle)
-    {
-        //possibleChild = new Node(this,angle,size,"");
-    }
-    
-    
+    }  
 }
