@@ -6,6 +6,7 @@
 package networkvisualizer;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -23,6 +24,16 @@ public class NetworkVisualizer {
         frame.getContentPane().add(networkPanel); 
         frame.pack();
         frame.setVisible(true);
+        
+        //DB Testing
+        int dbOn = JOptionPane.showConfirmDialog(null,
+            "Would you start with a DB conection. If you just want ot debug the UI click no!",
+            "DB Connection",
+            JOptionPane.YES_NO_OPTION);
+        
+        if(dbOn == JOptionPane.YES_OPTION) {
+            DBCore.test();
+        }
     }
     
 }
