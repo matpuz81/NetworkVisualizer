@@ -8,8 +8,6 @@ package networkvisualizer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.WindowEvent;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
 /**
@@ -43,9 +41,6 @@ class MenuListener implements ActionListener{
                         "Are you sure?",JOptionPane.YES_NO_OPTION);
                 if(i==0)
                     parent.deleteNode(node);
-                break;
-            case "disconnectNode":
-                
                 break;
             case "nodeProperties":
                 NodeParameters paramsFrame = new NodeParameters(parent, node);
