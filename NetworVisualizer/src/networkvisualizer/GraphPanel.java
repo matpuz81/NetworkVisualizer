@@ -5,7 +5,6 @@
  */
 package networkvisualizer;
 
-import com.sun.java.swing.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JPanel;
@@ -19,7 +18,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.LinkedList;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 /**
@@ -81,8 +79,6 @@ public class GraphPanel extends JPanel {
             }
         });
 
-        //centerNode = new Node(new Point(getSize().width/2,getSize().height/2),getNodeSize(), null); //this is used as reference
-        //centerNode.update(zoom);
         centerNode = new Point(getSize().width/2,getSize().height/2);
     }
     
@@ -91,42 +87,29 @@ public class GraphPanel extends JPanel {
         return centerNode;
     }
     
-    public void addParent(Point p)
+    public void createNode(Point p)     //Used to create a new node which is not connected yet to any other node
+    {
+        createNode(null,p);
+    }
+    
+    public void createNode(Node connectedNode, Point p)     //Used to create a new node (opens the NodeCreateFrame)
     {
         double angle = getAngle(centerNode,p);
         double distance = getDistance(centerNode,p);   
-        addNode(null,angle,distance);
-    }
-    
-    public double getAngle(Point p1 , Point p2)
-    {
-        return 180+Math.toDegrees(Math.atan2((p1.x-p2.x),(p1.y-p2.y)));
-    }
-    
-    public double getDistance(Point p1, Point p2)
-    {
-        return Math.sqrt(Math.pow((p1.x-p2.x), 2)+Math.pow((p1.y-p2.y), 2))*zoom;   
-    }
-    
-    public void addNode(Node parent, double angle, double distance)
-    {
-        Node tmpNode = new Node(parent,angle,distance,getNodeSize(), "Node " + (nodes.size()+1));
+        Node tmpNode = new Node(angle,distance,getNodeSize(), "Node " + (nodes.size()+1));
+        if(connectedNode != null)
+        {
+            tmpNode.nodes.add(connectedNode);
+            connectedNode.nodes.add(tmpNode);
+        }
         NodeCreateFrame createPanel = new NodeCreateFrame(this,tmpNode);
         createPanel.setVisible(true);
     }
     
-    public void addNode(Node parent, double angle, double distance, String label)
-    {
-        //distance/=zoom;
-        addNodeToList(new Node(parent, angle, distance, getNodeSize(), label), label);
-        //nodes.getLast().setPolar(angle, distance, zoom);
-    }
     
-    public void addNodeToList(Node n, String label)
+    public void addNode(Node n, String label)
     {
         n.setParams(label);
-       // if(n.nodes.getFirst() != null)
-        //    n.nodes.getFirst().nodes.add(n);
         nodes.add(n);
     }
     
@@ -149,6 +132,17 @@ public class GraphPanel extends JPanel {
     {
         return getNodeSize()*5;
     }
+    
+    public double getAngle(Point p1 , Point p2)
+    {
+        return 180+Math.toDegrees(Math.atan2((p1.x-p2.x),(p1.y-p2.y)));
+    }
+    
+    public double getDistance(Point p1, Point p2)
+    {
+        return Math.sqrt(Math.pow((p1.x-p2.x), 2)+Math.pow((p1.y-p2.y), 2))*zoom;   
+    }
+    
     
     @Override
     public void paint(Graphics g) {
@@ -222,8 +216,8 @@ public class GraphPanel extends JPanel {
         {
             Point p = n.getPosition(getCenterNode(),zoom);
             if(event.getPoint().distance(p) < getNodeSize()){
-
                 snappedNode=n;
+                mousePos=snappedNode.getPosition(getCenterNode(), zoom);
             }        
             if(movingNode != null && n == movingNode)
             {
@@ -275,9 +269,7 @@ public class GraphPanel extends JPanel {
             }    
             else if(snappedNode == null)        //a node is selected and anywhere else clicked, so a new node connected to the currently selected node gets created
             {
-                double angle = getAngle(getCenterNode(),event.getPoint());
-                double distance = getDistance(getCenterNode(),event.getPoint());
-                addNode(selectedNode,angle,distance);
+                createNode(selectedNode,event.getPoint());
                 selectedNode=null;
             }        
             else if(snappedNode != selectedNode && !areConnected(snappedNode,selectedNode))     //a node is selected and a other node clicked, asks if they should be connected

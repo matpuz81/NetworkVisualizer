@@ -86,7 +86,7 @@ public class NodeParameters extends JFrame {
         lm.clear();
         for(Node n:node.nodes){
             if(!nodesToRemove.contains(n))
-            lm.addElement(n.label);
+                lm.addElement(n.label);
         }
     }
     

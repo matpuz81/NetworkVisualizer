@@ -36,7 +36,7 @@ class MenuListener implements ActionListener{
                 parent.movingNode=node;
                 break;
             case "addNode":
-                parent.addParent(mouse.getPoint());
+                parent.createNode(mouse.getPoint());
                 break;
             case "deleteNode":
                 int i= JOptionPane.showConfirmDialog(null,"Delete Node " + node.label + "?",
@@ -49,6 +49,7 @@ class MenuListener implements ActionListener{
                 break;
             case "nodeProperties":
                 NodeParameters paramsFrame = new NodeParameters(parent, node);
+                paramsFrame.setVisible(true);
                 break;
         }
     }
