@@ -19,8 +19,7 @@ public class Node {
     private double angle,distance;
     String label;
     Color color=Color.red;
-    LinkedList<Node>nodes = new LinkedList(); // nodes[0] is parent
-    Point mousePos;
+    LinkedList<Node>nodes = new LinkedList();
     int size;
     boolean doFollowMouse=false;
     
@@ -29,47 +28,25 @@ public class Node {
         this.size = size;
         this.p=p;
         this.label=label;
-        nodes.add(null);
     }
     
-    public Node(Node parent, double angle, double distance, int size, String label)
+    public Node(double angle, double distance, int size, String label)
     {
         p=new Point();
         this.size=size;
         this.angle=angle;
         this.distance=distance;
-        //this.parent=parent;
         this.label=label;
-        nodes.add(parent);
     }
     
-    public Node(Node parent, int size, String label)
+    public Node(int size, String label)
     {
         p=new Point();
         this.size=size;
-        //this.parent=parent;
         this.label=label;
-        nodes.add(parent);
         
     }
-    /*
-    public void update(double zoom)
-    {
-        //this.zoom=zoom;
-       // this.size=size;
-        /*
-        if(nodes.getFirst()==null)  //is a parent 
-        {
-            
-        }
-        else
-        {
-            p.x = nodes.getFirst().p.x + (int)(Math.sin(Math.toRadians(angle))*distance * zoom);
-            p.y = nodes.getFirst().p.y + (int)(Math.cos(Math.toRadians(angle))*distance * zoom);
-        }
-
-    }
-    */
+    
     public void setParams(String label)
     {
         this.label=label;
@@ -81,7 +58,6 @@ public class Node {
         this.distance=distance;
     }
     
-    
     public Point getPosition(Point centerNode, double zoom)
     {        
         if(!doFollowMouse)
@@ -89,8 +65,6 @@ public class Node {
             p.x = centerNode.x + (int)(Math.sin(Math.toRadians(angle))*distance / zoom);
             p.y = centerNode.y + (int)(Math.cos(Math.toRadians(angle))*distance / zoom);
         }
-       //else
-            //doFollowMouse = false;
         return p;
     }  
     
