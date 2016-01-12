@@ -5,7 +5,6 @@
  */
 package networkvisualizer;
 
-import com.sun.java.swing.*;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JPanel;
@@ -19,7 +18,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.LinkedList;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 /**
@@ -81,8 +79,6 @@ public class GraphPanel extends JPanel {
             }
         });
 
-        //centerNode = new Node(new Point(getSize().width/2,getSize().height/2),getNodeSize(), null); //this is used as reference
-        //centerNode.update(zoom);
         centerNode = new Point(getSize().width/2,getSize().height/2);
     }
     
@@ -91,22 +87,15 @@ public class GraphPanel extends JPanel {
         return centerNode;
     }
     
-    public void createNode(Point p)
+    public void createNode(Point p)     //Used to create a new node which is not connected yet to any other node
     {
-        double angle = getAngle(centerNode,p);
-        double distance = getDistance(centerNode,p);   
-        createNodeWindow(null,angle,distance);
+        createNode(null,p);
     }
     
-    public void createNode(Node connectedNode, Point p)
+    public void createNode(Node connectedNode, Point p)     //Used to create a new node (opens the NodeCreateFrame)
     {
         double angle = getAngle(centerNode,p);
         double distance = getDistance(centerNode,p);   
-        createNodeWindow(connectedNode,angle,distance);
-    }
-    public void createNodeWindow(Node connectedNode, double angle, double distance)
-    {
-        
         Node tmpNode = new Node(angle,distance,getNodeSize(), "Node " + (nodes.size()+1));
         if(connectedNode != null)
         {
@@ -121,9 +110,6 @@ public class GraphPanel extends JPanel {
     public void addNode(Node n, String label)
     {
         n.setParams(label);
-        
-       // if(n.nodes.getFirst() != null)
-        //    n.nodes.getFirst().nodes.add(n);
         nodes.add(n);
     }
     
