@@ -23,6 +23,7 @@ public class DBCore {
     private final String us = "postgres";
     private final String pw = "password";
 
+    //The constructor creates a connection to the DB. There Should be onyl one DB object becouse otherwise the application has several connections simultaneusly.
     public DBCore() {
         int dbOn = JOptionPane.showConfirmDialog(null,
                 "Would you start with a DB conection. If you just want ot debug the UI click no!",
