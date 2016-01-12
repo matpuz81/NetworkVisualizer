@@ -18,7 +18,7 @@ import javax.swing.JPopupMenu;
  * @author chef
  */
 class NodeMenu extends JPopupMenu {
-    JMenuItem deleteNode,nodeProperties;
+    JMenuItem moveNode,deleteNode,nodeProperties;
     GraphPanel parent;
     Node node;
     MouseEvent event;
@@ -27,13 +27,17 @@ class NodeMenu extends JPopupMenu {
         this.parent = parent;
         this.event=event;
         this.node = node;
+        moveNode = new JMenuItem("Move");
+        moveNode.setActionCommand("moveNode");
         deleteNode = new JMenuItem("Delete");
         deleteNode.setActionCommand("deleteNode");
         nodeProperties = new JMenuItem("Properties");
         nodeProperties.setActionCommand("nodeProperties");
         
+        moveNode.addActionListener(new MenuListener(parent, event, node));
         deleteNode.addActionListener(new MenuListener(parent, event, node));
         nodeProperties.addActionListener(new MenuListener(parent, event, node));
+        add(moveNode);
         add(deleteNode);
         add(nodeProperties);
     }

@@ -34,6 +34,7 @@ public class GraphPanel extends JPanel {
     
     Node selectedNode=null;
     Node snappedNode=null;
+    Node movingNode=null;
     Point mousePos;
     
     int counter = 0;
@@ -44,23 +45,6 @@ public class GraphPanel extends JPanel {
         setPreferredSize(new Dimension(800,600));
         setSize(800,600);
         
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent event) {
-                    checkForHover(event);
-            }
-
-            @Override
-            public void mouseExited(MouseEvent event) {
-                    checkForHover(event);
-            }
-            
-            @Override
-            public void mousePressed(MouseEvent e) {
-                checkClick(e);
-            }
-        });
-
         addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseMoved(MouseEvent event) {
@@ -69,23 +53,29 @@ public class GraphPanel extends JPanel {
 
             @Override
             public void mouseDragged(MouseEvent event) {
-                checkForHover(event);
+                //checkDragging(event);
             }
         });
-        centerNode = new Node(new Point(getSize().width/2,getSize().height/2),getNodeSize(), null);
-        //addNode(centerNode,20,100,"Test");
+        
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                checkClick(e);
+            }
+        });
+
+        centerNode = new Node(new Point(getSize().width/2,getSize().height/2),getNodeSize(), null); //this is used as reference
     }
     
     public void addParent(Point p)
     {
-        double angle = 180+Math.toDegrees(Math.atan2((centerNode.x-p.x),(centerNode.y-p.y)));
-        double distance = Math.sqrt(Math.pow((centerNode.x-p.x), 2)+Math.pow((centerNode.y-p.y), 2));   
+        double angle = 180+Math.toDegrees(Math.atan2((centerNode.getPosition().x-p.x),(centerNode.getPosition().y-p.y)));
+        double distance = Math.sqrt(Math.pow((centerNode.getPosition().x-p.x), 2)+Math.pow((centerNode.getPosition().y-p.y), 2));   
         addNode(centerNode,angle,distance);
     }
     
     public void addNode(Node parent, double angle, double distance)
     {
-        //nodes.add(new Node(parent,angle,distance,getNodeSize(), "Unnamed Node"));
         Node tmpNode = new Node(parent,angle,distance,getNodeSize(), "Node " + (nodes.size()+1));
         NodeCreateFrame createPanel = new NodeCreateFrame(this,tmpNode);
         createPanel.setVisible(true);
@@ -93,7 +83,6 @@ public class GraphPanel extends JPanel {
     
     public void addNodeToList(Node n, String label)
     {
-       // addNodeToList(parent,angle,distance,getNodeSize(), label);
         n.setParams(label);
         nodes.add(n);
         n.nodes.getFirst().nodes.add(n);
@@ -101,13 +90,19 @@ public class GraphPanel extends JPanel {
     
     public void deleteNode(Node n)
     {
-        System.out.println("a");
-        for(Node nx:n.nodes)
-        {
+        for(Node nx:n.nodes){
             nx.nodes.remove(n);
         }
         nodes.remove(n);
-        
+    }
+    
+    public void moveNode(Node n, MouseEvent event)
+    {
+        selectedNode = n;
+        double angle = 180+Math.toDegrees(Math.atan2((selectedNode.getPosition().x-mousePos.x),(selectedNode.getPosition().y-mousePos.y)));
+        double distance = Math.sqrt(Math.pow((selectedNode.getPosition().x-mousePos.x), 2)+Math.pow((selectedNode.getPosition().y-mousePos.y), 2));
+        selectedNode.setPolar(angle, distance);
+        selectedNode.update(getNodeSize());
     }
     
     public int getNodeSize()
@@ -130,16 +125,17 @@ public class GraphPanel extends JPanel {
         }
         
         if(selectedNode!=null){
-            g2.drawLine(selectedNode.x, selectedNode.y, mousePos.x, mousePos.y);
+            g2.drawLine(selectedNode.getPosition().x, selectedNode.getPosition().y, mousePos.x, mousePos.y);
         }
         
         for (Node n:nodes) {     
-            Point p = n.getPosition(getNodeDistance());
+            Point p = n.getPosition();
+                
 
             if(!n.nodes.isEmpty()) {
                 for(Node subnode:n.nodes) {
                     if(subnode!=(getCenterNode())) {  
-                        g2.drawLine(subnode.x, subnode.y, p.x, p.y);
+                        g2.drawLine(subnode.getPosition().x, subnode.getPosition().y, p.x, p.y);
                     }
                 }
             }
@@ -150,7 +146,7 @@ public class GraphPanel extends JPanel {
         {      
             if(!n.equals(getCenterNode()))
             {
-                Point p = n.getPosition(getNodeDistance());
+                Point p = n.getPosition();
                 if(n==selectedNode)
                     g2.setColor(Color.green);
                 else if(n==snappedNode) {
@@ -164,7 +160,7 @@ public class GraphPanel extends JPanel {
                 g2.fillOval(p.x-getNodeSize(),p.y-getNodeSize(),getNodeSize()*2, getNodeSize()*2);
                 g2.setColor(nodeBorderColor);
 
-                g2.drawString(n.label, n.x-g.getFontMetrics().stringWidth(n.label)/2, n.y+3);     
+                g2.drawString(n.label, n.getPosition().x-g.getFontMetrics().stringWidth(n.label)/2, n.getPosition().y+3);     
             }
         }
     }
@@ -182,11 +178,15 @@ public class GraphPanel extends JPanel {
         snappedNode=null;
         for (Node n:nodes)
         {
-            Point p = n.getPosition(getNodeDistance());
-            if(event.getPoint().distance(p.x, p.y) < getNodeSize()){
-                mousePos = new Point(p.x,p.y);
+            Point p = n.getPosition();
+            if(event.getPoint().distance(p) < getNodeSize()){
+                mousePos = p;
                 snappedNode=n;
-            }                
+            }        
+            if(movingNode != null && n == movingNode)
+            {
+                n.followMouse(event);
+            }        
         }
         repaint();
     }
@@ -195,20 +195,8 @@ public class GraphPanel extends JPanel {
         
         if(SwingUtilities.isRightMouseButton(event))
         {
-            boolean onNode=false;
-            for(Node n:nodes){
-                if(event.getPoint().distance(n.x,n.y)<n.size){
-                    onNode=true;
-                    selectedNode=n;
-
-                    NodeMenu menu = new NodeMenu(this,event,selectedNode);
-                    menu.show(this, selectedNode.x, selectedNode.y);
-                    
-                    selectedNode=null;
-                }
-            }
-            
-            if(!onNode){    //If the right mouse button is clicked anywhere but on a node it unselects the selected Node
+            Node n = isMouseOnNode(event);
+            if(n==null){    //If the right mouse button is clicked anywhere but on a node it unselects the selected Node
                 if(selectedNode==null)
                 {
                     PanelMenu menu = new PanelMenu(this,event,selectedNode);
@@ -216,21 +204,32 @@ public class GraphPanel extends JPanel {
                 }
                 selectedNode=null;
             }
+            else{       //If the right mouse button is clicked on a node, the context menu opens
+                selectedNode=n;
+
+                NodeMenu menu = new NodeMenu(this,event,selectedNode);
+                menu.show(this, selectedNode.getPosition().x, selectedNode.getPosition().y);
+
+                selectedNode=null;
+            }
         }
         
         else
         {
-            if(selectedNode==null){
+            if(movingNode != null){
+                movingNode=null;
+            }
+            else if(selectedNode==null){
                 for(Node n:nodes){
-                    if(event.getPoint().distance(n.x,n.y)<n.size){
+                    if(event.getPoint().distance(n.getPosition())<n.size){
                         selectedNode=n;
                     }
                 }
             }    
             else if(snappedNode == null)
             {
-                double angle = 180+Math.toDegrees(Math.atan2((selectedNode.x-mousePos.x),(selectedNode.y-mousePos.y)));
-                double distance = Math.sqrt(Math.pow((selectedNode.x-mousePos.x), 2)+Math.pow((selectedNode.y-mousePos.y), 2));
+                double angle = 180+Math.toDegrees(Math.atan2((selectedNode.getPosition().x-mousePos.x),(selectedNode.getPosition().y-mousePos.y)));
+                double distance = Math.sqrt(Math.pow((selectedNode.getPosition().x-mousePos.x), 2)+Math.pow((selectedNode.getPosition().y-mousePos.y), 2));
                 addNode(selectedNode,angle,distance);
                 selectedNode=null;
             }        
@@ -247,24 +246,21 @@ public class GraphPanel extends JPanel {
                 }
             }
         }
-        
-        /*
-        
-        Node hasPossibleChild=null;
-        for (Node n:nodes)
-        {
-            if(n.possibleChild!=null){
-                hasPossibleChild=n;
-            }
-        }
-        if(hasPossibleChild!=null){
-            nodes.addLast(hasPossibleChild.possibleChild);
-            hasPossibleChild.removePossibleChild();
-        }*/
+        repaint();
     }
     
     public Node getCenterNode()
     {
         return centerNode;
+    }
+    
+    public Node isMouseOnNode(MouseEvent event) //returns a node if the mousepointer is over it, otherwise null
+    {
+        for(Node n:nodes){
+            if(event.getPoint().distance(n.getPosition())<n.size){
+                return n;
+            }
+        }
+        return null;
     }
 }

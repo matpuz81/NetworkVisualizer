@@ -8,6 +8,7 @@ package networkvisualizer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowEvent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -31,6 +32,9 @@ class MenuListener implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
+            case "moveNode":
+                parent.movingNode=node;
+                break;
             case "addNode":
                 parent.addParent(mouse.getPoint());
                 break;
@@ -40,9 +44,12 @@ class MenuListener implements ActionListener{
                 if(i==0)
                     parent.deleteNode(node);
                 break;
+            case "disconnectNode":
+                
+                break;
             case "nodeProperties":
                 JFrame paramsFrame = new JFrame("Parameters - " + node.label);
-                NodeParameters params = new NodeParameters(node);
+                NodeParameters params = new NodeParameters(parent, node);
                 paramsFrame.getContentPane().add(params);
                 paramsFrame.pack();
                 paramsFrame.setVisible(true);

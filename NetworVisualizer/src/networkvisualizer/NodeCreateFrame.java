@@ -76,18 +76,24 @@ public class NodeCreateFrame extends JFrame {
     private void save()
     {
         parentPanel.addNodeToList(node, labelInput.getText());
+        parentPanel.repaint();
+        close();
+    }
+    
+    private void close()
+    {
         this.setVisible(false);
         this.dispose();
     }
     
     private class NodeCreatePanelListener implements ActionListener {
 
-    
     @Override
     public void actionPerformed(ActionEvent e) {
         switch(e.getActionCommand())
         {
             case "cancel":
+                close();
                 break;
             case "save":
                 save();
