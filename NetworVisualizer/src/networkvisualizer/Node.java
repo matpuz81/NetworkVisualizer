@@ -16,51 +16,60 @@ import java.util.LinkedList;
  */
 public class Node {
     private Point p;
-    double angle,distance;
-    double minAngle=0, maxAngle=360;
+    private double angle,distance;
     String label;
-    int size;
     Color color=Color.red;
     LinkedList<Node>nodes = new LinkedList(); // nodes[0] is parent
     Point mousePos;
+    int size;
+    boolean doFollowMouse=false;
     
     public Node(Point p, int size, String label)
     {
+        this.size = size;
         this.p=p;
         this.label=label;
         nodes.add(null);
-        update(size);
     }
     
     public Node(Node parent, double angle, double distance, int size, String label)
     {
         p=new Point();
+        this.size=size;
         this.angle=angle;
         this.distance=distance;
-        this.minAngle = angle -120;
-        this.maxAngle = angle +120;
         //this.parent=parent;
         this.label=label;
         nodes.add(parent);
-        update(size);
     }
     
-    public void update(int size)
+    public Node(Node parent, int size, String label)
     {
+        p=new Point();
         this.size=size;
+        //this.parent=parent;
+        this.label=label;
+        nodes.add(parent);
         
+    }
+    /*
+    public void update(double zoom)
+    {
+        //this.zoom=zoom;
+       // this.size=size;
+        /*
         if(nodes.getFirst()==null)  //is a parent 
         {
             
         }
         else
         {
-            p.x = nodes.getFirst().p.x + (int)(Math.sin(Math.toRadians(angle))*distance);
-            p.y = nodes.getFirst().p.y + (int)(Math.cos(Math.toRadians(angle))*distance);
+            p.x = nodes.getFirst().p.x + (int)(Math.sin(Math.toRadians(angle))*distance * zoom);
+            p.y = nodes.getFirst().p.y + (int)(Math.cos(Math.toRadians(angle))*distance * zoom);
         }
 
     }
-    
+    */
     public void setParams(String label)
     {
         this.label=label;
@@ -72,18 +81,32 @@ public class Node {
         this.distance=distance;
     }
     
-    public int getNodeDistance()
-    {
-        return size * 5;
-    }
     
-    public Point getPosition()
+    public Point getPosition(Point centerNode, double zoom)
     {        
+        if(!doFollowMouse)
+        {
+            p.x = centerNode.x + (int)(Math.sin(Math.toRadians(angle))*distance / zoom);
+            p.y = centerNode.y + (int)(Math.cos(Math.toRadians(angle))*distance / zoom);
+        }
+       //else
+            //doFollowMouse = false;
         return p;
     }  
     
     public void followMouse(MouseEvent e)
     {
+        doFollowMouse = true;
         p=e.getPoint();
+    }
+    
+    public void stopFollowMouse()
+    {
+        doFollowMouse=false;
+    }
+    
+    public int getSize()
+    {
+        return (int)(size);
     }
 }

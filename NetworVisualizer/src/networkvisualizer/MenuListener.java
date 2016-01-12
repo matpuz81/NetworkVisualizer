@@ -48,11 +48,7 @@ class MenuListener implements ActionListener{
                 
                 break;
             case "nodeProperties":
-                JFrame paramsFrame = new JFrame("Parameters - " + node.label);
-                NodeParameters params = new NodeParameters(parent, node);
-                paramsFrame.getContentPane().add(params);
-                paramsFrame.pack();
-                paramsFrame.setVisible(true);
+                NodeParameters paramsFrame = new NodeParameters(parent, node);
                 break;
         }
     }
