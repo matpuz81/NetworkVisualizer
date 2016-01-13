@@ -92,7 +92,7 @@ public class GraphPanel extends JPanel {
     {
         double angle = getAngle(centerNode,p);
         double distance = getDistance(centerNode,p);   
-        Node tmpNode = new Node(angle,distance,getNodeSize(), "Node " + (nodes.size()+1));
+        Node tmpNode = new Node(-1,angle,distance,getNodeSize(), "Node " + (nodes.size()+1));
         if(connectedNode != null) {
             tmpNode.nodes.add(connectedNode);
             connectedNode.nodes.add(tmpNode);
@@ -101,8 +101,8 @@ public class GraphPanel extends JPanel {
         createPanel.setVisible(true);
     }
     
-    public void addNode(int id, double angle, double distance, String label) {
-        Node tmpNode = new Node(angle,distance,getNodeSize(),label);
+    public void addNode(int net_id, int id, double angle, double distance, String label) {
+        Node tmpNode = new Node(net_id,angle,distance,getNodeSize(),label);
         tmpNode.setId(id);
         addNode(tmpNode);
     }
@@ -112,7 +112,10 @@ public class GraphPanel extends JPanel {
         addNode(n);
     }
     
-    public void addNode(Node n) {
+    public void addNode(Node n) { //final add node function, adds it to the database and list
+        
+        int id = NetworkVisualizer.DB.addNode(n);
+        System.out.println(id);
         nodes.add(n);
     }
     
