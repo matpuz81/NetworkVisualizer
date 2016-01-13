@@ -41,7 +41,6 @@ public class GraphPanel extends JPanel {
     Point mousePos = new Point();
     Rectangle selection=null;
     
-    int counter = 0;
     String noNodeMessage ="Right click -> 'Add Node' to add Nodes";
     double zoom=1.00, maxZoom=10.0, minZoom=0.2;
     
@@ -81,13 +80,11 @@ public class GraphPanel extends JPanel {
         centerNode = new Point(getSize().width/2,getSize().height/2);
     }
     
-    public Point getCenterNode()
-    {
+    public Point getCenterNode() {
         return centerNode;
     }
     
-    public void createNode(Point p)     //Used to create a new node which is not connected yet to any other node
-    {
+    public void createNode(Point p) {     //Used to create a new node which is not connected yet to any other node
         createNode(null,p);
     }
     
@@ -96,8 +93,7 @@ public class GraphPanel extends JPanel {
         double angle = getAngle(centerNode,p);
         double distance = getDistance(centerNode,p);   
         Node tmpNode = new Node(angle,distance,getNodeSize(), "Node " + (nodes.size()+1));
-        if(connectedNode != null)
-        {
+        if(connectedNode != null) {
             tmpNode.nodes.add(connectedNode);
             connectedNode.nodes.add(tmpNode);
         }
@@ -105,10 +101,18 @@ public class GraphPanel extends JPanel {
         createPanel.setVisible(true);
     }
     
+    public void addNode(int id, double angle, double distance, String label) {
+        Node tmpNode = new Node(angle,distance,getNodeSize(),label);
+        tmpNode.setId(id);
+        addNode(tmpNode);
+    }
     
-    public void addNode(Node n, String label)
-    {
+    public void addNode(Node n, String label) {
         n.setParams(label);
+        addNode(n);
+    }
+    
+    public void addNode(Node n) {
         nodes.add(n);
     }
     
@@ -156,15 +160,11 @@ public class GraphPanel extends JPanel {
             g2.drawLine(selectedNode.getPosition(getCenterNode(),zoom).x, selectedNode.getPosition(getCenterNode(),zoom).y, mousePos.x, mousePos.y);
         }
         
-        for (Node n:nodes) {     
+        for (Node n:nodes) {
             Point p = n.getPosition(getCenterNode(),zoom);              
 
-            if(!n.nodes.isEmpty()) {
-                for(Node subnode:n.nodes) {
-                    if(subnode!=null) {  
-                        g2.drawLine(subnode.getPosition(getCenterNode(),zoom).x, subnode.getPosition(getCenterNode(),zoom).y, p.x, p.y);
-                    }
-                }
+            for(Node subnode:n.nodes) {
+                g2.drawLine(subnode.getPosition(getCenterNode(),zoom).x, subnode.getPosition(getCenterNode(),zoom).y, p.x, p.y);
             }
         }
         
@@ -199,27 +199,24 @@ public class GraphPanel extends JPanel {
     public void checkForHover(MouseEvent event){
 
         mousePos = event.getPoint();
-        if(SwingUtilities.isMiddleMouseButton(event))
-        {
+        snappedNode=null;
+        
+        if(SwingUtilities.isMiddleMouseButton(event)) {
             Point p = new Point(event.getX()-mouseCenterDifference.x, event.getY()-mouseCenterDifference.y);
             centerNode.setLocation(p);
         }
         
-        if(selection != null)
-        {
+        if(selection != null) {
             selection.setBounds( (int)Math.min(anchor.x,event.getX()), (int)Math.min(anchor.y,event.getY()),(int)Math.abs(event.getX()-anchor.x), (int)Math.abs(event.getY()-anchor.y));
         }
         
-        snappedNode=null;
-        for (Node n:nodes)
-        {
+        for (Node n:nodes) {
             Point p = n.getPosition(getCenterNode(),zoom);
             if(event.getPoint().distance(p) < getNodeSize()){
                 snappedNode=n;
                 mousePos=snappedNode.getPosition(getCenterNode(), zoom);
             }        
-            if(movingNode != null && n == movingNode)
-            {
+            if(movingNode != null && n == movingNode) {
                 n.followMouse(event);
             }        
         }
@@ -228,8 +225,7 @@ public class GraphPanel extends JPanel {
     
     public void checkClick(MouseEvent event){
         
-        if(SwingUtilities.isMiddleMouseButton(event))
-        {
+        if(SwingUtilities.isMiddleMouseButton(event)) {
             mouseCenterDifference = new Point(event.getX()-centerNode.x, event.getY()-centerNode.y);
         }
         
