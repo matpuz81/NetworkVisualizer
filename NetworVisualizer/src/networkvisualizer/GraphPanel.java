@@ -106,9 +106,7 @@ public class GraphPanel extends JPanel {
         if(!n.nodes.isEmpty())
             n.nodes.getFirst().nodes.add(n);
         addNode(n);
-    }
-    
-    
+    }    
     
     public void addNode(int net_id, int id, double angle, double distance, String label) {
         Node tmpNode = new Node(net_id,angle,distance,getNodeSize(),label);
@@ -138,6 +136,12 @@ public class GraphPanel extends JPanel {
         Node tmpNode = new Node(net_id,angle,distance,getNodeSize(),label);
         tmpNode.setId(id);
         nodes.add(tmpNode);
+    }
+    
+    public void connectNodes(Node n1, Node n2)
+    {
+        n1.nodes.add(n2);
+        n2.nodes.add(n1);
     }
     
     
