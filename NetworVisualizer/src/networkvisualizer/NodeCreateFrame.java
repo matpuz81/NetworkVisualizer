@@ -48,7 +48,7 @@ public class NodeCreateFrame extends JFrame {
         
         labelInputLabel = new JLabel("Label:");
         labelInput = new JTextField(20);
-        labelInput.setText(node.label);
+        labelInput.setText(node.getLabel());
         
         cancelButton = new JButton("Cancel");
         cancelButton.setActionCommand("cancel");

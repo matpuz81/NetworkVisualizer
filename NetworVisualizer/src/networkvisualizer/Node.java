@@ -15,14 +15,14 @@ import java.util.LinkedList;
  * @author chef
  */
 public class Node {
-    int id;
+    private int id;
     private Point p;
     private double angle,distance;
-    String label;
+    private String label;
     Color color=Color.red;
     LinkedList<Node>nodes = new LinkedList();
-    int size;
-    boolean doFollowMouse=false;
+    private final int size;
+    private boolean doFollowMouse=false;
     
     public Node(double angle, double distance, int size, String label)
     {
@@ -56,16 +56,6 @@ public class Node {
         this.distance=distance;
     }
     
-    public Point getPosition(Point centerNode, double zoom)
-    {        
-        if(!doFollowMouse)
-        {
-            p.x = centerNode.x + (int)(Math.sin(Math.toRadians(angle))*distance / zoom);
-            p.y = centerNode.y + (int)(Math.cos(Math.toRadians(angle))*distance / zoom);
-        }
-        return p;
-    }  
-    
     public void followMouse(MouseEvent e)
     {
         doFollowMouse = true;
@@ -77,8 +67,21 @@ public class Node {
         doFollowMouse=false;
     }
     
-    public int getSize()
-    {
-        return (int)(size);
+    public Point getPosition(Point centerNode, double zoom)
+    {        
+        if(!doFollowMouse)
+        {
+            p.x = centerNode.x + (int)(Math.sin(Math.toRadians(angle))*distance / zoom);
+            p.y = centerNode.y + (int)(Math.cos(Math.toRadians(angle))*distance / zoom);
+        }
+        return p;
+    }  
+    
+    public String getLabel() {
+        return label;
+    }
+    
+    public int getSize() {
+        return size;
     }
 }
