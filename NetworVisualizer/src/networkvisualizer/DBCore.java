@@ -46,6 +46,32 @@ public class DBCore {
         addNodesToPanelFromDb();
     }
     
+    public boolean deleteNodeConnection(Node n1, Node n2) {
+         try {
+            Statement stmt = connection.createStatement();
+            String sql = "delete from nodeconnection where id1 = "+getSamler(n1.getId(), n2.getId())+" and id2 = "+getBiger(n1.getId(), n2.getId())+";";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+    public boolean addNodeConnection(Node n1, Node n2) {
+         try {
+            Statement stmt = connection.createStatement();
+            String sql = "insert into nodeconnection (id1, id2) values ("+getSamler(n1.getId(), n2.getId())+","+getBiger(n1.getId(), n2.getId())+");";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
     //This method takes a Node object and add its into the DB
     public int addNode(Node n) {
         try {
@@ -271,5 +297,21 @@ public class DBCore {
             return false;
         }
 
+    }
+    
+    private int getSamler(int a, int b) {
+        if(a < b) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+    
+    private int getBiger(int a, int b) {
+        if(a > b) {
+            return a;
+        } else {
+            return b;
+        }
     }
 }
