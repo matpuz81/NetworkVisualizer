@@ -95,12 +95,19 @@ public class GraphPanel extends JPanel {
         Node tmpNode = new Node(-1,angle,distance,getNodeSize(), "Node " + (nodes.size()+1));
         if(connectedNode != null) {
             tmpNode.nodes.add(connectedNode);
-            connectedNode.nodes.add(tmpNode);
         }
-        addNode(tmpNode);
         NodeParameters createPanel = new NodeParameters(this,tmpNode);
         createPanel.setVisible(true);
     }
+    
+    public void createNodeFinally(Node n)
+    {
+        if(!n.nodes.isEmpty())
+            n.nodes.getFirst().nodes.add(n);
+        addNode(n);
+    }
+    
+    
     
     public void addNode(int net_id, int id, double angle, double distance, String label) {
         Node tmpNode = new Node(net_id,angle,distance,getNodeSize(),label);
@@ -130,10 +137,13 @@ public class GraphPanel extends JPanel {
     
     public void deleteNode(Node n)
     {
-        for(Node nx:n.nodes){
-            nx.nodes.remove(n);
+        if(NetworkVisualizer.DB.deleteNode(n))
+        {
+            for(Node nx:n.nodes){
+                nx.nodes.remove(n);
+            }
+            nodes.remove(n);
         }
-        nodes.remove(n);
     }
     
     
