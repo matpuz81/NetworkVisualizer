@@ -22,6 +22,12 @@ public class DBCore {
     private Connection connection = null;
     private final String us = "postgres";
     private final String pw = "password";
+    private final String dbName = "testDB";
+    private final String dbPort = "5432";
+    private final String dbIp = "127.0.0.1";
+    
+    //Temp variable to enable debugging
+    
 
     //The constructor creates a connection to the DB. There Should be onyl one DB object becouse otherwise the application has several connections simultaneusly.
     public DBCore() {
@@ -34,7 +40,7 @@ public class DBCore {
 
             try {
                 Class.forName("org.postgresql.Driver");
-                connection = DriverManager.getConnection("jdbc:postgresql://localhost:5432/testDB", us, pw);
+                connection = DriverManager.getConnection("jdbc:postgresql://"+dbIp+":"+dbPort+"/"+dbName, us, pw);
             } catch (Exception e) {
                 System.out.println("Connection to DB faild!");
                 e.printStackTrace();
