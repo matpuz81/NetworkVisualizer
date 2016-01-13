@@ -14,7 +14,8 @@ import javax.swing.JOptionPane;
  */
 public class NetworkVisualizer {
     
-    public static DBCore DB = new DBCore();
+    //This is the global DB Object. Every ineracction with the db should be done over this object.
+    public static final DBCore DB = new DBCore();
 
     /**
      * @param args the command line arguments
