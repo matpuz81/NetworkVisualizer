@@ -44,7 +44,7 @@ public class NodeParameters extends JFrame {
     public NodeParameters(GraphPanel parent, Node node)
     {
         this.node=node;
-        this.setTitle("Parameters - " + node.label);
+        this.setTitle("Parameters - " + node.getLabel());
         
         mainPanel.setLayout(new BorderLayout());
         
@@ -93,7 +93,7 @@ public class NodeParameters extends JFrame {
         {
             for(Node n:node.nodes){
                 if(!nodesToRemove.contains(n))
-                    lm.addElement(n.label);
+                    lm.addElement(n.getLabel());
             }
         }
     }

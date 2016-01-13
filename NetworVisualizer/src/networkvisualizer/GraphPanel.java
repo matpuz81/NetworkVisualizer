@@ -185,7 +185,7 @@ public class GraphPanel extends JPanel {
             g2.fillOval(p.x-getNodeSize(),p.y-getNodeSize(),getNodeSize()*2, getNodeSize()*2);
             g2.setColor(nodeBorderColor);
 
-            g2.drawString(n.label, n.getPosition(getCenterNode(),zoom).x-g.getFontMetrics().stringWidth(n.label)/2, n.getPosition(getCenterNode(),zoom).y+3);     
+            g2.drawString(n.getLabel(), n.getPosition(getCenterNode(),zoom).x-g.getFontMetrics().stringWidth(n.getLabel())/2, n.getPosition(getCenterNode(),zoom).y+3);     
         }
     }
     
@@ -270,7 +270,7 @@ public class GraphPanel extends JPanel {
             else if(snappedNode != selectedNode && !areConnected(snappedNode,selectedNode))     //a node is selected and a other node clicked, asks if they should be connected
             {
                 int n = JOptionPane.showConfirmDialog(this,
-                "Do you want to connect " + selectedNode.label + " to " + snappedNode.label + "?",
+                "Do you want to connect " + selectedNode.getLabel() + " to " + snappedNode.getLabel() + "?",
                 "Connect the nodes?",JOptionPane.YES_NO_OPTION);
                 if(n==0) {
                     selectedNode.nodes.add(snappedNode);
@@ -289,7 +289,7 @@ public class GraphPanel extends JPanel {
     public Node isMouseOnNode(MouseEvent event) //returns a node if the mousepointer is over it, otherwise null
     {
         for(Node n:nodes){
-            if(event.getPoint().distance(n.getPosition(getCenterNode(),zoom))<n.size){
+            if(event.getPoint().distance(n.getPosition(getCenterNode(),zoom))<n.getSize()){
                 return n;
             }
         }
