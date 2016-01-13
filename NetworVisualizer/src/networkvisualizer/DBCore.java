@@ -48,9 +48,8 @@ public class DBCore {
                 System.exit(0);
             }
             System.out.println("Opened database successfully");
-
             System.out.println(createDbStructure());
-            //System.out.println(this.cleanDbStruckture());
+            //System.out.println(this.cleanDbStructure());
 
         }
     }
