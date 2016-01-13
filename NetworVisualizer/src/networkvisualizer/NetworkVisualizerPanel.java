@@ -22,7 +22,6 @@ public class NetworkVisualizerPanel extends JPanel{
     
     public NetworkVisualizerPanel()
     {
-        GraphPanel graph = new GraphPanel();
         label = new JLabel();
         label.setText("ad");
        
@@ -31,7 +30,7 @@ public class NetworkVisualizerPanel extends JPanel{
         this.setBackground(Color.WHITE);
         //this.add(label);
         //this.add(field);
-        this.add(graph);
+        this.add(NetworkVisualizer.panel);
         
     }
     

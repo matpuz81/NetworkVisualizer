@@ -92,11 +92,11 @@ public class GraphPanel extends JPanel {
     {
         double angle = getAngle(centerNode,p);
         double distance = getDistance(centerNode,p);   
-        Node tmpNode = new Node(-1,angle,distance,getNodeSize(), "Node " + (nodes.size()+1));
+        Node tmpNode = new Node(-1,angle,distance,getNodeSize(), "192.168.1." + (nodes.size()+1));
         if(connectedNode != null) {
             tmpNode.nodes.add(connectedNode);
         }
-        NodeParameters createPanel = new NodeParameters(this,tmpNode);
+        NodeParameters createPanel = new NodeParameters(tmpNode);
         createPanel.setVisible(true);
     }
     

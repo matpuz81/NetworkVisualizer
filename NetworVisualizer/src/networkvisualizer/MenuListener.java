@@ -43,7 +43,7 @@ class MenuListener implements ActionListener{
                     parent.deleteNode(node);
                 break;
             case "nodeProperties":
-                NodeParameters paramsFrame = new NodeParameters(parent, node);
+                NodeParameters paramsFrame = new NodeParameters(node);
                 paramsFrame.setVisible(true);
                 break;
         }

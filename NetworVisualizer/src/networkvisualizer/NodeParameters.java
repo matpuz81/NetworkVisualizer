@@ -45,9 +45,9 @@ public class NodeParameters extends JFrame {
     JLabel labelInputLabel;
     JTextField labelInput;
     
-    public NodeParameters(GraphPanel parent, Node node)
+    public NodeParameters(Node node)
     {
-        this.parentPanel=parent;
+        this.parentPanel=NetworkVisualizer.panel;
         this.node=node;
         this.setTitle("Parameters - " + node.getLabel() + " - id:" + node.getId());
         
@@ -182,7 +182,7 @@ public class NodeParameters extends JFrame {
                     refreshList();
                     break;
                 case "nodeProperties":
-                    NodeParameters paramsFrame = new NodeParameters(parentPanel, getSelectedNode());
+                    NodeParameters paramsFrame = new NodeParameters(getSelectedNode());
                     paramsFrame.setVisible(true);
                     close();
                     break;

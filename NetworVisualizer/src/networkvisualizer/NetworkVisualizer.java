@@ -16,14 +16,15 @@ public class NetworkVisualizer {
     
     //This is the global DB Object. Every ineracction with the db should be done over this object.
     public static final DBCore DB = new DBCore();
+    public static final GraphPanel panel = new GraphPanel();
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE); 
         NetworkVisualizerPanel networkPanel = new NetworkVisualizerPanel();
+        frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE); 
         frame.getContentPane().add(networkPanel); 
         frame.pack();
         frame.setVisible(true);
