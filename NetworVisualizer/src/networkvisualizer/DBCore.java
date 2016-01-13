@@ -138,6 +138,8 @@ public class DBCore {
                     + "CREATE TABLE IF NOT EXISTS Node (\n"
                     + "  id_node SERIAL,\n"
                     + "  ip_address VARCHAR(15) NOT NULL,\n"
+                    + "  angle REAL,\n"
+                    + "  distance REAL,\n"
                     + "  status VARCHAR(45) NULL,\n"
                     + "  PRIMARY KEY (id_node)\n"
                     + ");\n"
