@@ -50,12 +50,14 @@ public class Node {
     public void setParams(String label)
     {
         this.label=label;
+        NetworkVisualizer.DB.updateNode(this);
     }
     
     public void setPolar(double angle, double distance)
     {
         this.angle=angle;
         this.distance=distance;
+        NetworkVisualizer.DB.updateNode(this);
     }
     
     public void followMouse(MouseEvent e)
