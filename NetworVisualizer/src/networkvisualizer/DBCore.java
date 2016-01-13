@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -43,7 +42,8 @@ public class DBCore {
         }
         System.out.println("Opened database successfully");
         System.out.println(createDbStructure());
-        //System.out.println(this.cleanDbStructure());
+        //System.out.println(this.cleanDb());
+        addNodesToPanelFromDb();
     }
     
     //This method takes a Node object and add its into the DB
@@ -96,6 +96,22 @@ public class DBCore {
     public boolean cleanDb() {
         deleteDbStructure();
         return createDbStructure();
+    }
+    
+    private boolean addNodesToPanelFromDb() {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "Select * from node;";
+            ResultSet res = stmt.executeQuery(sql);
+            while(res.next()) {
+                System.out.println(res.getInt(1)+" "+res.getString(2));
+            }
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
     }
 
     //This method creates the tables which are neccessary for our application
