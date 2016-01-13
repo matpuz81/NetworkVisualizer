@@ -115,12 +115,12 @@ public class NodeParameters extends JFrame {
     }
     
     void save() {
+        node.setParams(labelInput.getText());
         if(!parentPanel.nodes.contains(node))
         {
             parentPanel.createNodeFinally(node);
         }
         
-        node.setParams(labelInput.getText());
         
         for(Node n:nodesToRemove) {
             System.out.println(n.getLabel());
