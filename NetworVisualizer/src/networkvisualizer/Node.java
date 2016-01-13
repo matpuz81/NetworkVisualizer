@@ -15,6 +15,7 @@ import java.util.LinkedList;
  * @author chef
  */
 public class Node {
+    int id;
     private Point p;
     private double angle,distance;
     String label;
@@ -23,15 +24,9 @@ public class Node {
     int size;
     boolean doFollowMouse=false;
     
-    public Node(Point p, int size, String label)
-    {
-        this.size = size;
-        this.p=p;
-        this.label=label;
-    }
-    
     public Node(double angle, double distance, int size, String label)
     {
+        this.id=id;
         p=new Point();
         this.size=size;
         this.angle=angle;
@@ -44,6 +39,11 @@ public class Node {
         p=new Point();
         this.size=size;
         this.label=label;
+    }
+    
+    public void setId(int id)
+    {
+        this.id=id;
     }
     
     public void setParams(String label)
