@@ -6,7 +6,6 @@
 package networkvisualizer;
 
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -14,9 +13,9 @@ import javax.swing.JOptionPane;
  */
 public class NetworkVisualizer {
     
+    public static final GraphPanel panel = new GraphPanel();
     //This is the global DB Object. Every ineracction with the db should be done over this object.
     public static final DBCore DB = new DBCore();
-    public static final GraphPanel panel = new GraphPanel();
 
     /**
      * @param args the command line arguments
