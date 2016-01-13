@@ -65,7 +65,7 @@ public class DBCore {
     public boolean deleteNode(Node n) {
          try {
             Statement stmt = connection.createStatement();
-            String sql = "delete from node where id_node = ";
+            String sql = "delete from node where id_node = "+n.getId();
             stmt.executeUpdate(sql);
             stmt.close();
             return true;
