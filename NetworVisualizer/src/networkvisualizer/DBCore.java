@@ -31,27 +31,25 @@ public class DBCore {
 
     //The constructor creates a connection to the DB. There Should be onyl one DB object becouse otherwise the application has several connections simultaneusly.
     public DBCore() {
-        int dbOn = JOptionPane.showConfirmDialog(null,
-                "Would you start with a DB conection. If you just want ot debug the UI click no!",
-                "DB Connection",
-                JOptionPane.YES_NO_OPTION);
-
-        if (dbOn == JOptionPane.YES_OPTION) {
-
-            try {
-                Class.forName("org.postgresql.Driver");
-                connection = DriverManager.getConnection("jdbc:postgresql://"+dbIp+":"+dbPort+"/"+dbName, us, pw);
-            } catch (Exception e) {
-                System.out.println("Connection to DB faild!");
-                e.printStackTrace();
-                System.err.println(e.getClass().getName() + ": " + e.getMessage());
-                System.exit(0);
-            }
-            System.out.println("Opened database successfully");
-            System.out.println(createDbStructure());
-            //System.out.println(this.cleanDbStructure());
-
+        try {
+            Class.forName("org.postgresql.Driver");
+            connection = DriverManager.getConnection("jdbc:postgresql://" + dbIp + ":" + dbPort + "/" + dbName, us, pw);
+        } catch (Exception e) {
+            System.out.println("Connection to DB faild!");
+            e.printStackTrace();
+            System.err.println(e.getClass().getName() + ": " + e.getMessage());
+            System.exit(0);
         }
+        System.out.println("Opened database successfully");
+        System.out.println(createDbStructure());
+        //System.out.println(this.cleanDbStructure());
+    }
+    
+    public int addNote(Node n) {
+        Statement stmt = connection.createStatement();
+        String sql = "INSERT into node(ip_address) values('"+n+"');";
+        
+        return -1;
     }
 
     //This method creates the tables which are neccessary for our application
