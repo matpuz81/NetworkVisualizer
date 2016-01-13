@@ -50,7 +50,7 @@ public class DBCore {
     public int addNode(Node n) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "INSERT into node(ip_address) values('"+n.getLabel()+"') returning(id_node);";
+            String sql = "INSERT into node(ip_address, angle, dinsance) values('"+n.getLabel()+"',"+") returning(id_node);";
             ResultSet res = stmt.executeQuery(sql);
             res.next();
             int id = res.getInt(1);
@@ -59,6 +59,19 @@ public class DBCore {
         } catch (SQLException ex) {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
+        }
+    }
+    
+    public boolean updateNode(Node n) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "delete from node where id_node = "+n.getId();
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
     
