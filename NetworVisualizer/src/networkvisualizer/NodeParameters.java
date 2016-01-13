@@ -99,7 +99,7 @@ public class NodeParameters extends JFrame {
     final void refreshList()
     {
         lm.clear();
-        if(node.nodes.isEmpty())
+        if(node.nodes.isEmpty() || node.nodes.size() == nodesToRemove.size())
         {
             lm.addElement("No connected nodes");
             nodesList.setEnabled(false);
@@ -115,11 +115,17 @@ public class NodeParameters extends JFrame {
     }
     
     void save() {
+        if(!parentPanel.nodes.contains(node))
+        {
+            parentPanel.createNodeFinally(node);
+        }
+        
         node.setParams(labelInput.getText());
         
         for(Node n:nodesToRemove) {
-            node.nodes.remove(n);
+            System.out.println(n.getLabel());
             n.nodes.remove(node);
+            node.nodes.remove(n);
         }
         
         parentPanel.repaint();
