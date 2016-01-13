@@ -48,13 +48,15 @@ public class DBCore {
                 System.exit(0);
             }
             System.out.println("Opened database successfully");
-            System.out.println(createDbStruckture());
-            //System.out.println(this.cleanDbStructure());
+
+            System.out.println(createDbStructure());
+            //System.out.println(this.cleanDbStruckture());
+
         }
     }
 
     //This method creates the tables which are neccessary for our application
-    private boolean createDbStruckture() {
+    private boolean createDbStructure() {
         try {
             Statement stmt = connection.createStatement();
             String sql = "CREATE TABLE IF NOT EXISTS NetworkType (\n"
