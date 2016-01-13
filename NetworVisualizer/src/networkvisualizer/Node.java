@@ -44,7 +44,6 @@ public class Node {
         p=new Point();
         this.size=size;
         this.label=label;
-        
     }
     
     public void setParams(String label)

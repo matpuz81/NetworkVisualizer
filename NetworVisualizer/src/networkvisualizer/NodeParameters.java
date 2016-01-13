@@ -5,12 +5,12 @@
  */
 package networkvisualizer;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.LinkedList;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -37,6 +37,7 @@ public class NodeParameters extends JFrame {
     Node node;
     DefaultListModel lm = new DefaultListModel();
     JPanel listPanel = new JPanel();
+    JPanel southPanel = new JPanel();
     LinkedList<Node> nodesToRemove = new LinkedList();
     JButton cancelButton, saveButton;
     
@@ -44,20 +45,15 @@ public class NodeParameters extends JFrame {
     {
         this.node=node;
         this.setTitle("Parameters - " + node.label);
-        setPreferredSize(new Dimension(600,400));
-        setSize(600,400);
         
-        mainPanel.setLayout(new BoxLayout(mainPanel,2));
+        mainPanel.setLayout(new BorderLayout());
         
         listPanel.setBorder(BorderFactory.createTitledBorder("Connected Nodes:"));
-        
-        refreshList();
-        
+
         nodesList = new JList(lm);
         nodesList.setPreferredSize(new Dimension(300,150));
-        nodesList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        nodesList.addMouseListener(new MouseAdapter()
-        {
+        nodesList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        nodesList.addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
                 nodesList.setSelectedIndex(nodesList.locationToIndex(e.getPoint()));
@@ -66,16 +62,19 @@ public class NodeParameters extends JFrame {
         });
         listPanel.add(nodesList);
         
+        refreshList();
+        
         cancelButton = new JButton("Cancel");
         cancelButton.setActionCommand("cancel");
         cancelButton.addActionListener(new NodeParametersListener());
         saveButton = new JButton("Save");
         saveButton.setActionCommand("save");
         saveButton.addActionListener(new NodeParametersListener());
+        southPanel.add(cancelButton);
+        southPanel.add(saveButton);
         
-        mainPanel.add(listPanel);
-        mainPanel.add(cancelButton);
-        mainPanel.add(saveButton);
+        mainPanel.add(listPanel,BorderLayout.CENTER);
+        mainPanel.add(southPanel,BorderLayout.SOUTH);
         getContentPane().add(mainPanel);
         pack();
         setVisible(true);
@@ -84,15 +83,23 @@ public class NodeParameters extends JFrame {
     final void refreshList()
     {
         lm.clear();
-        for(Node n:node.nodes){
-            if(!nodesToRemove.contains(n))
-                lm.addElement(n.label);
+        if(node.nodes.isEmpty())
+        {
+            lm.addElement("No connected nodes");
+            nodesList.setEnabled(false);
+        }
+        
+        else
+        {
+            for(Node n:node.nodes){
+                if(!nodesToRemove.contains(n))
+                    lm.addElement(n.label);
+            }
         }
     }
     
     void save() {
-        for(Node n:nodesToRemove)
-        {
+        for(Node n:nodesToRemove) {
             node.nodes.remove(n);
             n.nodes.remove(node);
         }
@@ -108,12 +115,11 @@ public class NodeParameters extends JFrame {
         return node.nodes.get(nodesList.getSelectedIndex());
     }
     
-    
     void checkMousePress(MouseEvent e)
     {    
         if(SwingUtilities.isRightMouseButton(e))
         { 
-            if(nodesList.getSelectedIndex() != -1) {
+            if(nodesList.getSelectedIndex() != -1 && nodesList.isEnabled()) {
                 NodeParametersMenu paramMenu = new NodeParametersMenu();
                 paramMenu.show(nodesList,e.getX(),e.getY());
             }
@@ -125,14 +131,13 @@ public class NodeParameters extends JFrame {
         JMenuItem disconnectNode,nodeProperties;
 
         public NodeParametersMenu(){
-            disconnectNode = new JMenuItem("Delete");
+            disconnectNode = new JMenuItem("Disconnect");
             disconnectNode.setActionCommand("disconnectNode");
             nodeProperties = new JMenuItem("Properties");
             nodeProperties.setActionCommand("nodeProperties");
 
             disconnectNode.addActionListener(new NodeParametersListener());
             nodeProperties.addActionListener(new NodeParametersListener());
-            
             
             add(disconnectNode);
             add(nodeProperties);
@@ -149,7 +154,11 @@ public class NodeParameters extends JFrame {
                 case "disconnectNode": 
                     nodesToRemove.add(getSelectedNode());
                     refreshList();
-                    //parent.repaint();
+                    break;
+                case "nodeProperties":
+                    NodeParameters paramsFrame = new NodeParameters(parent, getSelectedNode());
+                    paramsFrame.setVisible(true);
+                    close();
                     break;
                 case "save":
                     save();
