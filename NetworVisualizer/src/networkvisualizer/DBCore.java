@@ -52,6 +52,7 @@ public class DBCore {
             String sql = "INSERT into node(ip_address) values('"+n.getLabel()+"') returning(id_node);";
             ResultSet res = stmt.executeQuery(sql);
             stmt.close();
+            res.next();
             return res.getInt(1);
         } catch (SQLException ex) {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
