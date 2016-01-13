@@ -46,14 +46,15 @@ public class DBCore {
         //System.out.println(this.cleanDbStructure());
     }
     
-    public int addNote(Node n) {
+    public int addNode(Node n) {
         try {
             Statement stmt = connection.createStatement();
             String sql = "INSERT into node(ip_address) values('"+n.getLabel()+"') returning(id_node);";
             ResultSet res = stmt.executeQuery(sql);
-            stmt.close();
             res.next();
-            return res.getInt(1);
+            int id = res.getInt(1);
+            stmt.close();
+            return id;
         } catch (SQLException ex) {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
