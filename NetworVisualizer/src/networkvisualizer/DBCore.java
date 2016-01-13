@@ -7,6 +7,7 @@ package networkvisualizer;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -48,11 +49,10 @@ public class DBCore {
     public int addNote(Node n) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "INSERT into node(ip_address) values('"+n.getLabel()+"');";
-            stmt.executeUpdate(sql);
-          
-            
-            return -1;
+            String sql = "INSERT into node(ip_address) values('"+n.getLabel()+"') returning(id_node);";
+            ResultSet res = stmt.executeQuery(sql);
+            stmt.close();
+            return res.getInt(1);
         } catch (SQLException ex) {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
