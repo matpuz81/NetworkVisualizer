@@ -53,8 +53,6 @@ public class NodeParameters extends JFrame {
         
         mainPanel.setLayout(new BorderLayout());
         
-        
-        
         labelInputLabel = new JLabel("Label:");
         labelInput = new JTextField(20);
         labelInput.setText(node.getLabel());
@@ -92,6 +90,8 @@ public class NodeParameters extends JFrame {
         mainPanel.add(centerPanel,BorderLayout.CENTER);
         mainPanel.add(southPanel,BorderLayout.SOUTH);
         getContentPane().add(mainPanel);
+        
+        getRootPane().setDefaultButton(saveButton);
         pack();
         setVisible(true);
     }
