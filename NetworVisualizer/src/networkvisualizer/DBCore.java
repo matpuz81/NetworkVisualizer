@@ -46,6 +46,7 @@ public class DBCore {
         //System.out.println(this.cleanDbStructure());
     }
     
+    //This method takes a Node object and add its into the DB
     public int addNode(Node n) {
         try {
             Statement stmt = connection.createStatement();
