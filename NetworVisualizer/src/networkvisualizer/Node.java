@@ -91,4 +91,12 @@ public class Node {
     public int getSize() {
         return size;
     }
+    
+    public double getAngle() {
+        return this.angle;
+    }
+    
+    public double getDistancee() {
+        return this.distance;
+    }
 }

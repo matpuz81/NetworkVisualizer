@@ -50,7 +50,7 @@ public class DBCore {
     public int addNode(Node n) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "INSERT into node(ip_address) values('"+n.getLabel()+"') returning(id_node);";
+            String sql = "INSERT into node(ip_address, angle, distance) values('"+n.getLabel()+"',"+n.getAngle()+", "+n.getDistancee()+") returning(id_node);";
             ResultSet res = stmt.executeQuery(sql);
             res.next(); //By calling one time next the first tuple became selected
             int id = res.getInt(1); //The number passing the get method represents the collum.
@@ -62,10 +62,13 @@ public class DBCore {
         }
     }
     
+    //You can pass this method node which will be updatet
     public boolean updateNode(Node n) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "delete from node where id_node = "+n.getId();
+            String sql = "update node set ip_address = '"+n.getLabel()+"' where id_node = "+n.getId()+";"
+                    + "update node set angle = "+n.getAngle()+" where id_node = "+n.getId()+";"
+                    + "update node set distance = "+n.getDistancee()+" where id_node = "+n.getId()+";";
             stmt.executeUpdate(sql);
             stmt.close();
             return true;
@@ -75,6 +78,7 @@ public class DBCore {
         }
     }
     
+    //You can pass a node which will be deleted
     public boolean deleteNode(Node n) {
          try {
             Statement stmt = connection.createStatement();
@@ -86,6 +90,12 @@ public class DBCore {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
+    }
+    
+    //This method deleates all entries from the Db and restore the structure.
+    public boolean cleanDb() {
+        deleteDbStructure();
+        return createDbStructure();
     }
 
     //This method creates the tables which are neccessary for our application
@@ -220,7 +230,7 @@ public class DBCore {
     }
 
     //This method deleats the table used by this application
-    private boolean cleanDbStructure() {
+    private boolean deleteDbStructure() {
         try {
             Statement stmt = connection.createStatement();
             String sql = "DROP TABLE NetworkConnection;\n"
