@@ -97,7 +97,8 @@ public class GraphPanel extends JPanel {
             tmpNode.nodes.add(connectedNode);
             connectedNode.nodes.add(tmpNode);
         }
-        NodeCreateFrame createPanel = new NodeCreateFrame(this,tmpNode);
+        addNode(tmpNode);
+        NodeParameters createPanel = new NodeParameters(this,tmpNode);
         createPanel.setVisible(true);
     }
     
@@ -115,8 +116,15 @@ public class GraphPanel extends JPanel {
     public void addNode(Node n) { //final add node function, adds it to the database and list
         
         int id = NetworkVisualizer.DB.addNode(n);
-        System.out.println(id);
-        nodes.add(n);
+        if(id!=-1)
+        {   
+            n.setId(id);
+            nodes.add(n);
+        }
+        else
+        {
+            
+        }
     }
     
     
