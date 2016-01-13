@@ -24,7 +24,6 @@ class MenuListener implements ActionListener{
         this.parent=NetworkVisualizer.panel;
         this.mouse=mouse;
         this.node=node;
-        
     }
     
     @Override

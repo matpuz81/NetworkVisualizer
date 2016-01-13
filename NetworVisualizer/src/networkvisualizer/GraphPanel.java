@@ -78,6 +78,7 @@ public class GraphPanel extends JPanel {
         });
 
         centerNode = new Point(getSize().width/2,getSize().height/2);
+        
     }
     
     public Point getCenterNode() {
@@ -125,7 +126,6 @@ public class GraphPanel extends JPanel {
         int id = NetworkVisualizer.DB.addNode(n);
         if(id!=-1)
         {   
-            n.setId(id);
             nodes.add(n);
         }
         else
@@ -133,6 +133,13 @@ public class GraphPanel extends JPanel {
             
         }
     }
+    
+    public void addFromDB(int net_id, int id, double angle, double distance, String label) {
+        Node tmpNode = new Node(net_id,angle,distance,getNodeSize(),label);
+        tmpNode.setId(id);
+        nodes.add(tmpNode);
+    }
+    
     
     
     public void deleteNode(Node n)

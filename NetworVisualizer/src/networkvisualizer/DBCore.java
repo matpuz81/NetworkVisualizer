@@ -124,14 +124,13 @@ public class DBCore {
         return createDbStructure();
     }
     
-    private boolean addNodesToPanelFromDb() {
+    public boolean addNodesToPanelFromDb() {
         try {
             Statement stmt = connection.createStatement();
             String sql = "Select * from node;";
             ResultSet res = stmt.executeQuery(sql);
             while(res.next()) {
-                NetworkVisualizer.panel.addNode(0, res.getInt("id_node"), res.getDouble("angle"), res.getDouble("distance"), res.getString("ip_address"));
-                //System.out.println(NetworkVisualizer.panel);
+                NetworkVisualizer.panel.addFromDB(0, res.getInt("id_node"), res.getDouble("angle"), res.getDouble("distance"), res.getString("ip_address"));
             }
             stmt.close();
             return true;
