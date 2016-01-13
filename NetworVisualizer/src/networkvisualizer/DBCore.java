@@ -50,10 +50,10 @@ public class DBCore {
     public int addNode(Node n) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "INSERT into node(ip_address, angle, dinsance) values('"+n.getLabel()+"',"+") returning(id_node);";
+            String sql = "INSERT into node(ip_address) values('"+n.getLabel()+"') returning(id_node);";
             ResultSet res = stmt.executeQuery(sql);
-            res.next();
-            int id = res.getInt(1);
+            res.next(); //By calling one time next the first tuple became selected
+            int id = res.getInt(1); //The number passing the get method represents the collum.
             stmt.close();
             return id;
         } catch (SQLException ex) {
