@@ -19,12 +19,10 @@ import javax.swing.JPopupMenu;
  */
 class PanelMenu extends JPopupMenu {
     JMenuItem addNode,properties;
-    GraphPanel parent;
     Node node;
     MouseEvent event;
     
-    public PanelMenu(GraphPanel parent,MouseEvent event, Node node){
-        this.parent = parent;
+    public PanelMenu(MouseEvent event, Node node){
         this.event=event;
         this.node = node;
         addNode = new JMenuItem("Add Node");
@@ -32,8 +30,8 @@ class PanelMenu extends JPopupMenu {
         properties = new JMenuItem("Properties");
         properties.setActionCommand("properties");
         
-        addNode.addActionListener(new MenuListener(parent, event, node));
-        properties.addActionListener(new MenuListener(parent, event, node));
+        addNode.addActionListener(new MenuListener(event, node));
+        properties.addActionListener(new MenuListener(event, node));
         add(addNode);
         add(properties);
     }

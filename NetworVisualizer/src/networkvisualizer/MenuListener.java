@@ -19,9 +19,9 @@ class MenuListener implements ActionListener{
     GraphPanel parent;
     Node node;
     MouseEvent mouse;
-    public MenuListener(GraphPanel parent, MouseEvent mouse, Node node)
+    public MenuListener(MouseEvent mouse, Node node)
     {
-        this.parent=parent;
+        this.parent=NetworkVisualizer.panel;
         this.mouse=mouse;
         this.node=node;
         

@@ -256,7 +256,7 @@ public class GraphPanel extends JPanel {
             if(n==null){    //If the right mouse button is clicked anywhere but on a node it unselects the selected Node
                 if(selectedNode==null)
                 {
-                    PanelMenu menu = new PanelMenu(this,event,selectedNode);
+                    PanelMenu menu = new PanelMenu(event,selectedNode);
                     menu.show(this, event.getPoint().x, event.getPoint().y);
                 }
                 selectedNode=null;
@@ -264,7 +264,7 @@ public class GraphPanel extends JPanel {
             else{       //If the right mouse button is clicked on a node, the context menu opens
                 selectedNode=n;
 
-                NodeMenu menu = new NodeMenu(this,event,selectedNode);
+                NodeMenu menu = new NodeMenu(event,selectedNode);
                 menu.show(this, selectedNode.getPosition(getCenterNode(),zoom).x, selectedNode.getPosition(getCenterNode(),zoom).y);
 
                 selectedNode=null;
