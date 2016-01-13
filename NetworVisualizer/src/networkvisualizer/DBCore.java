@@ -46,10 +46,17 @@ public class DBCore {
     }
     
     public int addNote(Node n) {
-        Statement stmt = connection.createStatement();
-        String sql = "INSERT into node(ip_address) values('"+n+"');";
-        
-        return -1;
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "INSERT into node(ip_address) values('"+n.getLabel()+"');";
+            stmt.executeUpdate(sql);
+          
+            
+            return -1;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
     }
 
     //This method creates the tables which are neccessary for our application
