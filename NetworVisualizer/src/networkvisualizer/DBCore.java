@@ -49,7 +49,7 @@ public class DBCore {
     public boolean deleteNodeConnection(Node n1, Node n2) {
          try {
             Statement stmt = connection.createStatement();
-            String sql = "delete from nodeconnection where id1 = "+getSamler(n1.getId(), n2.getId())+" and id2 = "+getBiger(n1.getId(), n2.getId())+";";
+            String sql = "delete from nodeconnection where id1 = "+getSmaller(n1.getId(), n2.getId())+" and id2 = "+getBigger(n1.getId(), n2.getId())+";";
             stmt.executeUpdate(sql);
             stmt.close();
             return true;
@@ -62,7 +62,7 @@ public class DBCore {
     public boolean addNodeConnection(Node n1, Node n2) {
          try {
             Statement stmt = connection.createStatement();
-            String sql = "insert into nodeconnection (id1, id2) values ("+getSamler(n1.getId(), n2.getId())+","+getBiger(n1.getId(), n2.getId())+");";
+            String sql = "insert into nodeconnection (id1, id2) values ("+getSmaller(n1.getId(), n2.getId())+","+getBigger(n1.getId(), n2.getId())+");";
             stmt.executeUpdate(sql);
             stmt.close();
             return true;
@@ -299,7 +299,7 @@ public class DBCore {
 
     }
     
-    private int getSamler(int a, int b) {
+    private int getSmaller(int a, int b) {
         if(a < b) {
             return a;
         } else {
@@ -307,7 +307,7 @@ public class DBCore {
         }
     }
     
-    private int getBiger(int a, int b) {
+    private int getBigger(int a, int b) {
         if(a > b) {
             return a;
         } else {
