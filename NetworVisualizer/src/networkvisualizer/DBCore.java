@@ -61,6 +61,19 @@ public class DBCore {
             return -1;
         }
     }
+    
+    public boolean deleteNode(Node n) {
+         try {
+            Statement stmt = connection.createStatement();
+            String sql = "delete from node where id_node = ";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
 
     //This method creates the tables which are neccessary for our application
     private boolean createDbStructure() {
