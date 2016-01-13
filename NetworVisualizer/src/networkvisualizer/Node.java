@@ -26,7 +26,6 @@ public class Node {
     
     public Node(double angle, double distance, int size, String label)
     {
-        this.id=id;
         p=new Point();
         this.size=size;
         this.angle=angle;
