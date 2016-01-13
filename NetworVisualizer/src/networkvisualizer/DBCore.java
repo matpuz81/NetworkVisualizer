@@ -49,7 +49,7 @@ public class DBCore {
             }
             System.out.println("Opened database successfully");
             System.out.println(createDbStruckture());
-            //System.out.println(this.cleanDbStruckture());
+            //System.out.println(this.cleanDbStructure());
         }
     }
 
@@ -182,7 +182,7 @@ public class DBCore {
     }
 
     //This method deleats the table used by this application
-    private boolean cleanDbStruckture() {
+    private boolean cleanDbStructure() {
         try {
             Statement stmt = connection.createStatement();
             String sql = "DROP TABLE NetworkConnection;\n"
