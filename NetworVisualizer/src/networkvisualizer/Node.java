@@ -69,6 +69,11 @@ public class Node {
         doFollowMouse=false;
     }
     
+    public int getId()
+    {
+        return id;
+    }
+    
     public Point getPosition(Point centerNode, double zoom)
     {        
         if(!doFollowMouse)

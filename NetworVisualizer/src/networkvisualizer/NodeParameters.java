@@ -22,6 +22,7 @@ import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 
@@ -33,20 +34,31 @@ public class NodeParameters extends JFrame {
     
     JPanel mainPanel = new JPanel();
     JList nodesList;
-    GraphPanel parent;
+    GraphPanel parentPanel;
     Node node;
     DefaultListModel lm = new DefaultListModel();
     JPanel listPanel = new JPanel();
     JPanel southPanel = new JPanel();
+    JPanel centerPanel = new JPanel();
     LinkedList<Node> nodesToRemove = new LinkedList();
     JButton cancelButton, saveButton;
+    JLabel labelInputLabel;
+    JTextField labelInput;
     
     public NodeParameters(GraphPanel parent, Node node)
     {
+        this.parentPanel=parent;
         this.node=node;
-        this.setTitle("Parameters - " + node.getLabel());
+        this.setTitle("Parameters - " + node.getLabel() + " - id:" + node.getId());
         
         mainPanel.setLayout(new BorderLayout());
+        
+        
+        
+        labelInputLabel = new JLabel("Label:");
+        labelInput = new JTextField(20);
+        labelInput.setText(node.getLabel());
+        
         
         listPanel.setBorder(BorderFactory.createTitledBorder("Connected Nodes:"));
 
@@ -73,7 +85,11 @@ public class NodeParameters extends JFrame {
         southPanel.add(cancelButton);
         southPanel.add(saveButton);
         
-        mainPanel.add(listPanel,BorderLayout.CENTER);
+        centerPanel.add(labelInputLabel);
+        centerPanel.add(labelInput);
+        centerPanel.add(listPanel);
+        
+        mainPanel.add(centerPanel,BorderLayout.CENTER);
         mainPanel.add(southPanel,BorderLayout.SOUTH);
         getContentPane().add(mainPanel);
         pack();
@@ -99,10 +115,14 @@ public class NodeParameters extends JFrame {
     }
     
     void save() {
+        node.setParams(labelInput.getText());
+        
         for(Node n:nodesToRemove) {
             node.nodes.remove(n);
             n.nodes.remove(node);
         }
+        
+        parentPanel.repaint();
         close();
     }
     void close()
@@ -156,7 +176,7 @@ public class NodeParameters extends JFrame {
                     refreshList();
                     break;
                 case "nodeProperties":
-                    NodeParameters paramsFrame = new NodeParameters(parent, getSelectedNode());
+                    NodeParameters paramsFrame = new NodeParameters(parentPanel, getSelectedNode());
                     paramsFrame.setVisible(true);
                     close();
                     break;
