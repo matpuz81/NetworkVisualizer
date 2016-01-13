@@ -49,6 +49,7 @@ public class DBCore {
             }
             System.out.println("Opened database successfully");
             System.out.println(createDbStruckture());
+            //System.out.println(this.cleanDbStruckture());
         }
     }
 
@@ -112,9 +113,10 @@ public class DBCore {
                     + ");\n"
                     + " \n"
                     + "CREATE TABLE IF NOT EXISTS Node (\n"
+                    + "  id SERIAL,\n"
                     + "  ip_address VARCHAR(15) NOT NULL,\n"
                     + "  status VARCHAR(45) NULL,\n"
-                    + "  PRIMARY KEY (ip_address)\n"
+                    + "  PRIMARY KEY (id)\n"
                     + ");\n"
                     + " \n"
                     + "CREATE TABLE IF NOT EXISTS NodeConnection (\n"
