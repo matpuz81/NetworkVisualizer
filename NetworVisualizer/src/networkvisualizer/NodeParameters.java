@@ -69,6 +69,7 @@ public class NodeParameters extends JFrame {
             }
         }
         networkList.addItem("Add Network...");
+        networkList.setSelectedItem(null);
         networkList.setActionCommand("changeNetwork");
         networkList.addActionListener(new NodeParametersListener());
         
@@ -149,7 +150,7 @@ public class NodeParameters extends JFrame {
         {
             
         }
-        else
+        //else
         {
             node.setParams(labelInput.getText());
             if(!parentPanel.nodes.contains(node))
