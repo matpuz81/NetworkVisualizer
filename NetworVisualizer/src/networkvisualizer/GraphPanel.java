@@ -111,8 +111,7 @@ public class GraphPanel extends JPanel {
             if(!n.nodes.isEmpty())      //check if node is connected to another node, if so then add the connection
             {
                 Node connectedNode = n.nodes.getFirst();
-                connectedNode.nodes.add(n);
-                NetworkVisualizer.DB.addNodeConnection(n, connectedNode);
+                addNodeConnection(n,connectedNode);
             }
             nodes.add(n);
         }
@@ -127,6 +126,15 @@ public class GraphPanel extends JPanel {
         tmpNode.setId(id);
         tmpNode.setNetwork(net);
         nodes.add(tmpNode);
+    }
+    
+    public void addNodeConnection(Node n1, Node n2)
+    {
+        if(!n1.nodes.contains(n2))
+            n1.nodes.add(n2);
+        if(!n2.nodes.contains(n1))
+            n2.nodes.add(n1);
+        NetworkVisualizer.DB.addNodeConnection(n1, n2);
     }
     
     public void connectNodesById(int id1, int id2)
@@ -323,8 +331,7 @@ public class GraphPanel extends JPanel {
                 "Do you want to connect " + selectedNode.getLabel() + " to " + snappedNode.getLabel() + "?",
                 "Connect the nodes?",JOptionPane.YES_NO_OPTION);
                 if(n==0) {
-                    selectedNode.nodes.add(snappedNode);
-                    snappedNode.nodes.add(selectedNode);
+                    addNodeConnection(selectedNode,snappedNode);
                     selectedNode=null;
                 }
             }
