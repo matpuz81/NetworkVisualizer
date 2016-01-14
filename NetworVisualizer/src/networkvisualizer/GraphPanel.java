@@ -85,63 +85,72 @@ public class GraphPanel extends JPanel {
         return centerNode;
     }
     
-    public void createNode(Point p) {     //Used to create a new node which is not connected yet to any other node
-        createNode(null,p);
-    }
-    
     public void createNode(Node connectedNode, Point p)     //Used to create a new node (opens the NodeCreateFrame)
     {
         double angle = getAngle(centerNode,p);
         double distance = getDistance(centerNode,p);   
+        
+        Network net = null;
+        
+        if(connectedNode != null)
+        {
+            
+        }
+        
         Node tmpNode = new Node(null,angle,distance,getNodeSize(), "192.168.1." + (nodes.size()+1));
         if(connectedNode != null) {
-            tmpNode.nodes.add(connectedNode);
+            tmpNode.nodes.add(connectedNode);       //If the node is connected to another node, add the other node to the list
         }
         NodeParameters createPanel = new NodeParameters(tmpNode);
         createPanel.setVisible(true);
     }
     
-    public void createNodeFinally(Node n)
-    {
-        if(!n.nodes.isEmpty())
-            n.nodes.getFirst().nodes.add(n);
-        addNode(n);
-    }    
     
-    public void addNode(Network net, int id, double angle, double distance, String label) {
-        Node tmpNode = new Node(net,angle,distance,getNodeSize(),label);
-        tmpNode.setId(id);
-        addNode(tmpNode);
-    }
-    
-    public void addNode(Node n, String label) {
-        n.setParams(label);
-        addNode(n);
-    }
-    
-    public void addNode(Node n) { //final add node function, adds it to the database and list
+    public void addNodeToDb(Node n) { //final add node function, adds it to the database and list
         
         int id = NetworkVisualizer.DB.addNode(n);
+
         if(id!=-1)
-        {   
+        {          
+            n.setId(id);
+            if(!n.nodes.isEmpty())      //check if node is connected to another node, if so then add the connection
+            {
+                Node connectedNode = n.nodes.getFirst();
+                connectedNode.nodes.add(n);
+                NetworkVisualizer.DB.addNodeConnection(n, connectedNode);
+            }
             nodes.add(n);
         }
         else
         {
-            
+            databaseError(0);
         }
     }
     
-    public void addFromDB(Network net, int id, double angle, double distance, String label) {
+    public void addNodeFromDB(Network net, int id, double angle, double distance, String label) {
         Node tmpNode = new Node(net,angle,distance,getNodeSize(),label);
         tmpNode.setId(id);
         nodes.add(tmpNode);
     }
     
-    public void connectNodes(Node n1, Node n2)
+    public void connectNodesById(int id1, int id2)
     {
-        n1.nodes.add(n2);
-        n2.nodes.add(n1);
+        Node n1=getNodeById(id1), n2=getNodeById(id2);
+        if(n1 != null && n2 != null)
+        {
+            n1.nodes.add(n2);
+            n2.nodes.add(n1);
+        }
+    }
+    
+    public Node getNodeById(int id)
+    {
+        for(Node n:nodes)
+        {
+            if(n.getId() == id)
+                return n;
+        }
+        return null;
     }
     
     
@@ -176,6 +185,11 @@ public class GraphPanel extends JPanel {
     public double getDistance(Point p1, Point p2)
     {
         return Math.sqrt(Math.pow((p1.x-p2.x), 2)+Math.pow((p1.y-p2.y), 2))*zoom;   
+    }
+    
+    private void databaseError(int error_id)
+    {
+        System.out.println("DB_ERROR");
     }
     
     

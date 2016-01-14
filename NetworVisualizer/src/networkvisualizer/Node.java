@@ -36,13 +36,6 @@ public class Node {
         this.label=label;
     }
     
-    public Node(int size, String label)
-    {
-        p=new Point();
-        this.size=size;
-        this.label=label;
-    }
-    
     public void setId(int id)
     {
         this.id=id;

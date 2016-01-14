@@ -127,7 +127,7 @@ public class NodeParameters extends JFrame {
         node.setParams(labelInput.getText());
         if(!parentPanel.nodes.contains(node))
         {
-            parentPanel.createNodeFinally(node);
+            parentPanel.addNodeToDb(node);
         }
         
         
