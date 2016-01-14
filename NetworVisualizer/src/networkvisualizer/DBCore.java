@@ -130,7 +130,7 @@ public class DBCore {
             String sql = "Select * from node;";
             ResultSet res = stmt.executeQuery(sql);
             while(res.next()) {
-                NetworkVisualizer.panel.addFromDB(0, res.getInt("id_node"), res.getDouble("angle"), res.getDouble("distance"), res.getString("ip_address"));
+                NetworkVisualizer.panel.addFromDB(null, res.getInt("id_node"), res.getDouble("angle"), res.getDouble("distance"), res.getString("ip_address"));
             }
             stmt.close();
             return true;
