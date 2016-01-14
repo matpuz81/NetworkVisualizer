@@ -126,6 +126,7 @@ public class DBCore {
     
     public boolean addNodesToPanelFromDb() {
         try {
+            //Add all Nodes of the DB to the panel
             Statement stmt = connection.createStatement();
             String sql = "Select * from node;";
             ResultSet res = stmt.executeQuery(sql);
@@ -133,6 +134,16 @@ public class DBCore {
                 NetworkVisualizer.panel.addNodeFromDB(null, res.getInt("id_node"), res.getDouble("angle"), res.getDouble("distance"), res.getString("ip_address"));
             }
             stmt.close();
+            
+            //Connenct all nodes at the panel
+            stmt = connection.createStatement();
+            sql = "Select * from nodeconnection;";
+            res = stmt.executeQuery(sql);
+            while(res.next()) {
+                NetworkVisualizer.panel.connectNodesById(res.getInt("id1"), res.getInt("id2"));
+            }
+            stmt.close();
+            
             return true;
         } catch (SQLException ex) {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
