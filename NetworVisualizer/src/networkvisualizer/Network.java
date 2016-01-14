@@ -4,6 +4,8 @@
  */
 package networkvisualizer;
 
+import java.util.LinkedList;
+
 /**
  *
  * @author chef
@@ -22,6 +24,11 @@ public class Network {
         this.net_type_id=net_type_id;
         this.net_topology=net_topology;
         this.net_com_protocol=net_com_protocol;
+    }
+    
+    public void setParams(String name)
+    {
+        this.name=name;
     }
     
     public int getId() {
@@ -46,6 +53,16 @@ public class Network {
     
     public String getNet_topology() {
         return net_topology;
+    }
+    
+    public LinkedList<Node> getNodes()
+    {
+        LinkedList<Node> nodes = new LinkedList();
+        for(Node n:NetworkVisualizer.panel.nodes){
+            if(n.getNetwork() == this)
+                nodes.add(n);
+        }
+        return nodes;
     }
     
     

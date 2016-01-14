@@ -93,7 +93,7 @@ public class GraphPanel extends JPanel {
     {
         double angle = getAngle(centerNode,p);
         double distance = getDistance(centerNode,p);   
-        Node tmpNode = new Node(-1,angle,distance,getNodeSize(), "192.168.1." + (nodes.size()+1));
+        Node tmpNode = new Node(null,angle,distance,getNodeSize(), "192.168.1." + (nodes.size()+1));
         if(connectedNode != null) {
             tmpNode.nodes.add(connectedNode);
         }
@@ -108,8 +108,8 @@ public class GraphPanel extends JPanel {
         addNode(n);
     }    
     
-    public void addNode(int net_id, int id, double angle, double distance, String label) {
-        Node tmpNode = new Node(net_id,angle,distance,getNodeSize(),label);
+    public void addNode(Network net, int id, double angle, double distance, String label) {
+        Node tmpNode = new Node(net,angle,distance,getNodeSize(),label);
         tmpNode.setId(id);
         addNode(tmpNode);
     }
@@ -132,8 +132,8 @@ public class GraphPanel extends JPanel {
         }
     }
     
-    public void addFromDB(int net_id, int id, double angle, double distance, String label) {
-        Node tmpNode = new Node(net_id,angle,distance,getNodeSize(),label);
+    public void addFromDB(Network net, int id, double angle, double distance, String label) {
+        Node tmpNode = new Node(net,angle,distance,getNodeSize(),label);
         tmpNode.setId(id);
         nodes.add(tmpNode);
     }
