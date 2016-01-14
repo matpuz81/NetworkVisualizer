@@ -90,16 +90,11 @@ public class GraphPanel extends JPanel {
         double angle = getAngle(centerNode,p);
         double distance = getDistance(centerNode,p);   
         
-        Network net = null;
         
-        if(connectedNode != null)
-        {
-            
-        }
-        
-        Node tmpNode = new Node(null,angle,distance,getNodeSize(), "192.168.1." + (nodes.size()+1));
+        Node tmpNode = new Node(angle,distance,getNodeSize(), "192.168.1." + (nodes.size()+1));
         if(connectedNode != null) {
             tmpNode.nodes.add(connectedNode);       //If the node is connected to another node, add the other node to the list
+            tmpNode.setNetwork(connectedNode.getNetwork());
         }
         NodeParameters createPanel = new NodeParameters(tmpNode);
         createPanel.setVisible(true);
@@ -128,8 +123,9 @@ public class GraphPanel extends JPanel {
     }
     
     public void addNodeFromDB(Network net, int id, double angle, double distance, String label) {
-        Node tmpNode = new Node(net,angle,distance,getNodeSize(),label);
+        Node tmpNode = new Node(angle,distance,getNodeSize(),label);
         tmpNode.setId(id);
+        tmpNode.setNetwork(net);
         nodes.add(tmpNode);
     }
     
@@ -143,18 +139,6 @@ public class GraphPanel extends JPanel {
         }
     }
     
-    public Node getNodeById(int id)
-    {
-        for(Node n:nodes)
-        {
-            if(n.getId() == id)
-                return n;
-        }
-        return null;
-    }
-    
-    
-    
     public void deleteNode(Node n)
     {
         if(NetworkVisualizer.DB.deleteNode(n))
@@ -166,6 +150,26 @@ public class GraphPanel extends JPanel {
         }
     }
     
+    public Node getNodeById(int id)
+    {
+        for(Node n:nodes)
+        {
+            if(n.getId() == id)
+                return n;
+        }
+        return null;
+    }
+    
+    public LinkedList<Network> getNetworks()
+    {
+        LinkedList<Network> networks = new LinkedList();
+        for(Node n:nodes)
+        {
+            if(!networks.contains(n.getNetwork()) && n.getNetwork() != null)
+                networks.add(n.getNetwork());
+        }
+        return networks;
+    }
     
     public int getNodeSize()
     {
