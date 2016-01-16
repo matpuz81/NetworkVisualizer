@@ -7,6 +7,7 @@ package networkvisualizer;
 
 /**
  *
+ * 
  * @author Jessica
  */
 public class User {
