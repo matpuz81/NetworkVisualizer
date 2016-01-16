@@ -29,7 +29,7 @@ import javax.swing.SwingUtilities;
 
 /**
  *
- * @author chef
+ * @author chef 
  */
 public class NodeParameters extends JFrame {
     
