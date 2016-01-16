@@ -76,7 +76,7 @@ public class DBCore {
     public int addNode(Node n) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "INSERT into node(ip_address, angle, distance) values('"+n.getLabel()+"',"+n.getAngle()+", "+n.getDistancee()+") returning(id_node);";
+            String sql = "INSERT into node(ip_address, angle, distance) values('"+n.getLabel()+"',"+n.getAngle()+", "+n.getDistance()+") returning(id_node);";
             ResultSet res = stmt.executeQuery(sql);
             res.next(); //By calling one time next the first tuple became selected
             int id = res.getInt(1); //The number passing the get method represents the collum.
@@ -94,7 +94,7 @@ public class DBCore {
             Statement stmt = connection.createStatement();
             String sql = "update node set ip_address = '"+n.getLabel()+"' where id_node = "+n.getId()+";"
                     + "update node set angle = "+n.getAngle()+" where id_node = "+n.getId()+";"
-                    + "update node set distance = "+n.getDistancee()+" where id_node = "+n.getId()+";";
+                    + "update node set distance = "+n.getDistance()+" where id_node = "+n.getId()+";";
             stmt.executeUpdate(sql);
             stmt.close();
             return true;

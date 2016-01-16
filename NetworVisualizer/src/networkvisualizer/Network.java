@@ -12,23 +12,29 @@ import java.util.LinkedList;
  */
 public class Network {
     
-    private final int id;
+    private int id;
     private String name, description;
-    private final int net_type_id, net_com_protocol;
-    private final String net_topology;
+    private int net_type_id=-1, net_com_protocol=-1;
+    private String net_topology="";
     
-    public Network(int id, String name, String description, int net_type_id, String net_topology, int net_com_protocol){
-        this.id=id;
+    
+    public Network(){
+        name="Unnamed Network";
+        description="";
+    }
+    
+    public void setId(int id)
+    {
+         this.id=id;       
+    }
+    
+    public void setParams(String name,String description, int net_type_id, String net_topology, int net_com_protocol)
+    {
         this.name=name;
         this.description=description;
         this.net_type_id=net_type_id;
         this.net_topology=net_topology;
         this.net_com_protocol=net_com_protocol;
-    }
-    
-    public void setParams(String name)
-    {
-        this.name=name;
     }
     
     public int getId() {

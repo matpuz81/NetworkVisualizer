@@ -22,6 +22,7 @@ import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
@@ -40,10 +41,12 @@ public class NetworkParameters extends JFrame {
     JPanel listPanel = new JPanel();
     JPanel southPanel = new JPanel();
     JPanel centerPanel = new JPanel();
+    JPanel leftPanel = new JPanel();
     LinkedList<Node> nodesToRemove = new LinkedList();
     JButton cancelButton, saveButton;
-    JLabel labelInputLabel;
-    JTextField labelInput;
+    JLabel nameInputLabel;
+    JTextArea descriptionInput;
+    JTextField nameInput;
     
     public NetworkParameters(Network net)
     {
@@ -52,10 +55,13 @@ public class NetworkParameters extends JFrame {
         this.setTitle("Parameters - " + net.getName() + " - id:" + net.getId());
         
         mainPanel.setLayout(new BorderLayout());
+        leftPanel.setLayout(new BoxLayout(leftPanel,BoxLayout.Y_AXIS));
         
-        labelInputLabel = new JLabel("Label:");
-        labelInput = new JTextField(20);
-        labelInput.setText(net.getName());
+        nameInputLabel = new JLabel("Label:");
+        nameInput = new JTextField(20);
+        nameInput.setText(net.getName());
+        
+        descriptionInput = new JTextArea(5,20);
         
         
         listPanel.setBorder(BorderFactory.createTitledBorder("Connected Nodes:"));
@@ -83,8 +89,11 @@ public class NetworkParameters extends JFrame {
         southPanel.add(cancelButton);
         southPanel.add(saveButton);
         
-        centerPanel.add(labelInputLabel);
-        centerPanel.add(labelInput);
+        leftPanel.add(nameInputLabel);
+        leftPanel.add(nameInput);
+        leftPanel.add(descriptionInput);
+        
+        centerPanel.add(leftPanel);
         centerPanel.add(listPanel);
         
         mainPanel.add(centerPanel,BorderLayout.CENTER);
@@ -115,7 +124,10 @@ public class NetworkParameters extends JFrame {
     }
     
     void save() {
-        net.setParams(labelInput.getText());
+        
+        net.setParams(nameInput.getText(), descriptionInput.getText(), -1, "LAN", -1);
+        NetworkVisualizer.panel.repaint();
+        //net.setParams(labelInput.getText());
         /*
         if(!parentPanel.nodes.contains(node))
         {

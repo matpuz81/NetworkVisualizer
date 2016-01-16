@@ -5,7 +5,12 @@
  */
 package networkvisualizer;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 
 /**
  *
@@ -22,10 +27,53 @@ public class NetworkVisualizer {
      */
     public static void main(String[] args) {
         JFrame frame = new JFrame();
+        frame.setJMenuBar(buildMenu());
         NetworkVisualizerPanel networkPanel = new NetworkVisualizerPanel();
         frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE); 
         frame.getContentPane().add(networkPanel); 
         frame.pack();
         frame.setVisible(true);
+    }
+ 
+    public static JMenuBar buildMenu() {
+        JMenuBar menuBar;
+        JMenu userMenu, networkMenu, serviceMenu;
+        JMenuItem userItem, servicesItem, 
+                topologiesItem, networkTypeItem, communicationProtocolItem;
+        
+        menuBar = new JMenuBar();
+        
+        userMenu = new JMenu("User");
+        userItem = new JMenuItem("User List");
+        userItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                UserList user = new UserList();
+            }
+        });
+        userMenu.add(userItem);
+        
+        networkMenu = new JMenu("Network");
+        topologiesItem = new JMenuItem("Topologies");
+        //topolotgiesItem.addActionListener(this);
+        networkMenu.add(topologiesItem);
+        networkTypeItem = new JMenuItem("Network Types");
+        //networkTypeItem.addActionListener(this);
+        networkMenu.add(networkTypeItem);
+        communicationProtocolItem = new JMenuItem("Communication Protocols");
+        //communicationProtocolItem.addActionListener(this);
+        networkMenu.add(communicationProtocolItem);
+        
+        serviceMenu = new JMenu("Service");
+        servicesItem = new JMenuItem("Services");
+        //servicesItem.addActionListener(this);
+        serviceMenu.add(servicesItem);
+        
+        menuBar.add(userMenu);
+        menuBar.add(serviceMenu);
+        menuBar.add(networkMenu);
+        
+        return menuBar;
     }
 }
