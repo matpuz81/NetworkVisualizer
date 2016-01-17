@@ -29,7 +29,7 @@ import javax.swing.SwingUtilities;
 
 /**
  *
- * @author chef
+ * @author chef 
  */
 public class NodeParameters extends JFrame {
     
@@ -43,8 +43,9 @@ public class NodeParameters extends JFrame {
     JPanel southPanel = new JPanel();
     JPanel centerPanel = new JPanel();
     JPanel leftPanel = new JPanel();
+    JPanel networkButtonsPanel = new JPanel();
     LinkedList<Node> nodesToRemove = new LinkedList();
-    JButton cancelButton, saveButton,networkParamButton;
+    JButton cancelButton, saveButton,networkParamButton,addNetworkButton;
     JLabel labelInputLabel;
     JTextField labelInput;
     
@@ -62,14 +63,8 @@ public class NodeParameters extends JFrame {
         labelInput.setText(node.getLabel());
 
         
-        if (!NetworkVisualizer.panel.getNetworks().isEmpty()) {
-            for(Network n:NetworkVisualizer.panel.getNetworks())
-            {
-                networkList.addItem(n.getName());
-            }
-        }
-        networkList.addItem("Add Network...");
-        networkList.setSelectedItem(null);
+        
+        
         networkList.setActionCommand("changeNetwork");
         networkList.addActionListener(new NodeParametersListener());
         
@@ -77,6 +72,12 @@ public class NodeParameters extends JFrame {
         networkParamButton.setActionCommand("openNetworkParam");
         networkParamButton.addActionListener(new NodeParametersListener());
         
+        addNetworkButton = new JButton("Add Network");
+        addNetworkButton.setActionCommand("addNetwork");
+        addNetworkButton.addActionListener(new NodeParametersListener());
+        
+        networkButtonsPanel.add(addNetworkButton);
+        networkButtonsPanel.add(networkParamButton);
         
         addList();
         
@@ -92,8 +93,8 @@ public class NodeParameters extends JFrame {
         
         leftPanel.add(labelInputLabel);
         leftPanel.add(labelInput);
-        leftPanel.add(networkParamButton);
         leftPanel.add(networkList);
+        leftPanel.add(networkButtonsPanel);
         
         centerPanel.add(leftPanel);
         centerPanel.add(listPanel);
@@ -128,6 +129,11 @@ public class NodeParameters extends JFrame {
     
     final void refreshList()
     {
+        for(Network n:NetworkVisualizer.panel.getNetworks())
+        {
+            networkList.addItem(n.getName());
+        }
+        
         nodeListModel.clear();
         if(node.nodes.isEmpty() || node.nodes.size() == nodesToRemove.size())
         {
@@ -150,7 +156,7 @@ public class NodeParameters extends JFrame {
         {
             
         }
-        //else
+        else
         {
             node.setParams(labelInput.getText());
             if(!parentPanel.nodes.contains(node))
@@ -215,11 +221,21 @@ public class NodeParameters extends JFrame {
         public void actionPerformed(ActionEvent e) {
             switch(e.getActionCommand())
             {
+                case "addNetwork":
+                    
+                    Network tmpNet = new Network();
+                    node.setNetwork(tmpNet);
+                    NetworkParameters addNetworkFrame = new NetworkParameters(tmpNet);
+                    addNetworkFrame.setVisible(true);
+                    save();
+                    break;
                 case "changeNetwork":
-                    if(networkList.getSelectedIndex()==networkList.getItemCount())
-                    {
-                        System.out.println("hi");
-                    }
+                    
+                    break;
+                case "openNetworkParam":
+                    NetworkParameters netParamsFrame = new NetworkParameters(node.getNetwork());
+                    netParamsFrame.setVisible(true);
+                    save();
                     break;
                 case "disconnectNode": 
                     nodesToRemove.add(getSelectedNode());
@@ -229,10 +245,6 @@ public class NodeParameters extends JFrame {
                     NodeParameters paramsFrame = new NodeParameters(getSelectedNode());
                     paramsFrame.setVisible(true);
                     close();
-                    break;
-                case "openNetworkParam":
-                    NetworkParameters netParamsFrame = new NetworkParameters(node.getNetwork());
-                    netParamsFrame.setVisible(true);
                     break;
                 case "save":
                     save();

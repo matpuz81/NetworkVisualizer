@@ -101,7 +101,7 @@ public class Node {
         return this.angle;
     }
     
-    public double getDistancee() {
+    public double getDistance() {
         return this.distance;
     }
 }

@@ -199,6 +199,14 @@ public class GraphPanel extends JPanel {
         return Math.sqrt(Math.pow((p1.x-p2.x), 2)+Math.pow((p1.y-p2.y), 2))*zoom;   
     }
     
+    public Point getPointFromAngleDistance(double angle, double distance)
+    {
+        Point p = new Point();
+        p.x = centerNode.x + (int)(Math.sin(Math.toRadians(angle))*distance / zoom);
+        p.y = centerNode.y + (int)(Math.cos(Math.toRadians(angle))*distance / zoom);
+        return p;
+    }
+    
     private void databaseError(int error_id)
     {
         System.out.println("DB_ERROR");
@@ -209,7 +217,8 @@ public class GraphPanel extends JPanel {
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
         g2.clearRect(0,0,this.getSize().width,this.getSize().height);
-        
+        g2.drawLine((int)(centerNode.x-15/zoom), (int)(centerNode.y), (int)(centerNode.x+15/zoom), (int)(centerNode.y));
+        g2.drawLine((int)(centerNode.x), (int)(centerNode.y-15/zoom), (int)(centerNode.x), (int)(centerNode.y+15/zoom));
         if(nodes.isEmpty()){
             g2.drawString(noNodeMessage,this.getSize().width/2-g.getFontMetrics().stringWidth(noNodeMessage)/2, getSize().height/2+3);
         }
@@ -245,6 +254,8 @@ public class GraphPanel extends JPanel {
 
             g2.drawString(n.getLabel(), n.getPosition(getCenterNode(),zoom).x-g.getFontMetrics().stringWidth(n.getLabel())/2, n.getPosition(getCenterNode(),zoom).y+3);     
         }
+        
+        g2.fillOval(getMiddle().x, getMiddle().y, 10, 10);
     }
     
     public boolean areConnected(Node n1, Node n2)
@@ -340,6 +351,31 @@ public class GraphPanel extends JPanel {
             }
         }
         repaint();
+    }
+    
+    public Point getMiddle()
+    {
+        double middleAngle=0,middleDistance=0;
+        Point p=new Point(0,0);
+        for(Node n:nodes)
+        {
+            Point np = n.getPosition(getCenterNode(), zoom);
+            /*
+            middleAngle+=n.getAngle();
+            if(n.getAngle()<180)
+            middleDistance+=n.getDistance();
+            else
+            middleDistance-=n.getDistance();
+                    */
+            p.x += np.x;
+            p.y += np.y;
+                
+        }
+        p.x/=nodes.size();
+        p.y/=nodes.size();
+        //middleAngle/=(nodes.size());
+        //middleDistance/=(nodes.size());
+        return p;//getPointFromAngleDistance(middleAngle,middleDistance);
     }
     
     
