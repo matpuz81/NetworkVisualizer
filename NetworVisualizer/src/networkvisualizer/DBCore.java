@@ -42,8 +42,50 @@ public class DBCore {
         }
         System.out.println("Opened database successfully");
         System.out.println(createDbStructure());
-        //System.out.println(this.cleanDb());
+        System.out.println(this.cleanDb());
         addNodesToPanelFromDb();
+    }
+    
+    public int addComunicationProtocol(ComunicationProtocol comProt) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "insert into comunicationprotocol(name, level, description) values('"+comProt.getName()+"', '"+comProt.getLevel()+"', '"+comProt.getDescription()+"') returning protocol_id;";
+            ResultSet res = stmt.executeQuery(sql);
+            res.next(); //By calling one time next the first tuple became selected
+            int id = res.getInt(1); //The number passing the get method represents the collum.
+            stmt.close();
+            return id;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+    }
+    
+    public boolean addNetworkTopology(NetworkTopology netTop) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "insert into networktopology(name, structure) values('"+netTop.getName()+"', '"+netTop.getStructure()+"');";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }   
+    }
+    
+    public boolean addNetworkType(NetworkType netType) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "insert into networktype(id_net_type, description) values('"+netType.getId()+"', '"+netType.getDescription()+"');";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+       
     }
     
     public boolean deleteNodeConnection(Node n1, Node n2) {
@@ -233,7 +275,7 @@ public class DBCore {
                     + ");\n"
                     + "   \n"
                     + "CREATE TABLE IF NOT EXISTS Network (\n"
-                    + "  id_network INT NULL,\n"
+                    + "  id_network SERIAL,\n"
                     + "  Name VARCHAR(45) NULL,\n"
                     + "  Description VARCHAR(300) NULL,\n"
                     + "  NetworkType_id_net_type VARCHAR(3) NOT NULL,\n"
