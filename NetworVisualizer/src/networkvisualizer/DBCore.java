@@ -42,7 +42,7 @@ public class DBCore {
         }
         System.out.println("Opened database successfully");
         System.out.println(createDbStructure());
-        System.out.println(this.cleanDb());
+        //System.out.println(this.cleanDb());
         addNodesToPanelFromDb();
     }
     
