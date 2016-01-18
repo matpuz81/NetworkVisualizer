@@ -10,6 +10,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -43,8 +44,62 @@ public class DBCore {
         System.out.println("Opened database successfully");
         System.out.println(createDbStructure());
         //System.out.println(this.cleanDb());
-        addNodesToPanelFromDb();
+        //insertExampleData();
+        
     }
+    
+    public ArrayList<ComunicationProtocol> getAllComunicationProtocol() {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from comunicationprotocol;";
+            ResultSet res = stmt.executeQuery(sql);
+            ArrayList<ComunicationProtocol> output = new ArrayList<ComunicationProtocol>();
+            while(res.next())  {
+                output.add(new ComunicationProtocol(res.getInt("protocol_id"), res.getString("name"), res.getString("level"), res.getString("description")));
+            }
+            stmt.close();
+            return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public ArrayList<NetworkTopology> getAllNetworkTopology() {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from networktopology;";
+            ResultSet res = stmt.executeQuery(sql);
+            ArrayList<NetworkTopology> output = new ArrayList<NetworkTopology>();
+            while(res.next())  {
+                output.add(new NetworkTopology(res.getString("name"), res.getString("structure")));
+            }
+            stmt.close();
+            return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public ArrayList<NetworkType> getAllNetworkType() {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from networktype;";
+            ResultSet res = stmt.executeQuery(sql);
+            ArrayList<NetworkType> output = new ArrayList<NetworkType>();
+            while(res.next())  {
+                output.add(new NetworkType(res.getString("id_net_type"), res.getString("description")));
+            }
+            stmt.close();
+            return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    
     
     public int addComunicationProtocol(ComunicationProtocol comProt) {
         try {
@@ -54,6 +109,7 @@ public class DBCore {
             res.next(); //By calling one time next the first tuple became selected
             int id = res.getInt(1); //The number passing the get method represents the collum.
             stmt.close();
+            comProt.setId(id); //The passed object gets also the id selected by the db
             return id;
         } catch (SQLException ex) {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
@@ -350,6 +406,12 @@ public class DBCore {
             return false;
         }
 
+    }
+    
+    private void insertExampleData() {
+        addNetworkType(new NetworkType("LAN", "local"));
+        addNetworkTopology(new NetworkTopology("star", "normal"));
+        addComunicationProtocol(new ComunicationProtocol("TCP", "low", "def")); 
     }
     
     private int getSmaller(int a, int b) {

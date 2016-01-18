@@ -16,11 +16,21 @@ public class ComunicationProtocol {
     private String level;
     private String description;
     
+    public ComunicationProtocol(String name, String level, String desc) {
+        this.name = name;
+        this.level = level;
+        this.description = desc;
+    }
+    
     public ComunicationProtocol(int id, String name, String level, String desc) {
         this.protocol_id = id;
         this.name = name;
         this.level = level;
         this.description = desc;
+    }
+    
+    public void setId(int id) {
+        this.protocol_id = id;
     }
     
     public int getId() {
