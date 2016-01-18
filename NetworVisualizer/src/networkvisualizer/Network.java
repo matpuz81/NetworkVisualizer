@@ -8,14 +8,15 @@ import java.util.LinkedList;
 
 /**
  *
- * @author chef
+ * @author chef´
  */
 public class Network {
     
     private int id;
     private String name, description;
-    private int net_type_id=-1, net_com_protocol=-1;
-    private String net_topology="";
+    private int net_com_protocol=-1;
+    private String net_topology="",net_type_id="";
+    
     
     
     public Network(){
@@ -28,7 +29,7 @@ public class Network {
          this.id=id;       
     }
     
-    public void setParams(String name,String description, int net_type_id, String net_topology, int net_com_protocol)
+    public void setParams(String name,String description, String net_type_id, String net_topology, int net_com_protocol)
     {
         this.name=name;
         this.description=description;
@@ -49,7 +50,7 @@ public class Network {
         return description;
     }
     
-    public int getNet_type_id() {
+    public String getNet_type_id() {
         return net_type_id;
     }
     
