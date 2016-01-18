@@ -47,6 +47,7 @@ public class DBCore {
         //insertExampleData();
         addNodesToPanelFromDb();
         
+        
     }
     
     public ArrayList<ComunicationProtocol> getAllComunicationProtocol() {
@@ -143,6 +144,47 @@ public class DBCore {
             return false;
         }
        
+    }
+    
+    public int addNetwork(Network net) throws Exception {
+        try {
+            Statement stmt = connection.createStatement();
+            //Cheching if comunication protocol exists
+            String sql = "select * from comunicationprotocol where protocol_id = "+net.getNet_com_protocol()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if(!res.next()) {
+                throw new Exception("Comunication protocol not found");
+            }
+            
+            //Cheching if networktopology exists
+            sql = "select * from networktopology where name = '"+net.getNet_topology()+"';";
+            res = stmt.executeQuery(sql);
+            if(!res.next()) {
+                throw new Exception("Networktopology not found");
+            }
+            
+             //Cheching if networktype exists
+            sql = "select * from networktype where id_net_type = '"+net.getNet_type_id()+"';";
+            res = stmt.executeQuery(sql);
+            if(!res.next()) {
+                throw new Exception("Networktype not found");
+            }
+            
+            sql = "insert into network(name, description, networktype_id_net_type, networktopology_name, comunicationprotocol_id) values('"+net.getName()+"', '"+net.getDescription()+"', '"+net.getNet_type_id()+"', '"+net.getNet_topology()+"', "+net.getNet_com_protocol()+") returning id_network;";
+            res = stmt.executeQuery(sql);
+            
+            res.next();
+            int newNetId = res.getInt(1);
+            
+            stmt.close();
+            
+            net.setId(newNetId);
+            
+            return newNetId;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
     }
     
     public boolean deleteNodeConnection(Node n1, Node n2) {
