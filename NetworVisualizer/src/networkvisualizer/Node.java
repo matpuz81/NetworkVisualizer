@@ -25,6 +25,7 @@ public class Node {
     LinkedList<Node>nodes = new LinkedList();
     private final int size;
     private boolean doFollowMouse=false;
+    private double prevAngle=0, prevDistance=0;
     
     public Node(double angle, double distance, int size, String label)
     {
@@ -33,6 +34,9 @@ public class Node {
         this.angle=angle;
         this.distance=distance;
         this.label=label;
+        
+        p.x = (int)(Math.sin(Math.toRadians(angle))*distance);
+        p.y = (int)(Math.cos(Math.toRadians(angle))*distance);
     }
     
     public void setId(int id)
@@ -56,6 +60,10 @@ public class Node {
         this.angle=angle;
         this.distance=distance;
         NetworkVisualizer.DB.updateNode(this);
+        
+        
+        p.x = (int)(Math.sin(Math.toRadians(angle))*distance);
+        p.y = (int)(Math.cos(Math.toRadians(angle))*distance);
     }
     
     public void followMouse(MouseEvent e)
@@ -81,13 +89,24 @@ public class Node {
     
     public Point getPosition(Point centerNode, double zoom)
     {        
+        
         if(!doFollowMouse)
         {
-            p.x = centerNode.x + (int)(Math.sin(Math.toRadians(angle))*distance / zoom);
-            p.y = centerNode.y + (int)(Math.cos(Math.toRadians(angle))*distance / zoom);
+            //p.x = centerNode.x + (int)(Math.sin(Math.toRadians(angle))*distance / zoom);
+           // p.y = centerNode.y + (int)(Math.cos(Math.toRadians(angle))*distance / zoom);
         }
-        return p;
+        return new Point((int)(centerNode.x + p.x/zoom), (int)(centerNode.y + p.y / zoom));
     }  
+    
+    public int getX(Point centerNode, double zoom)
+    {
+        return (int)(centerNode.x + p.x/zoom);
+    }
+        
+    public int getY(Point centerNode, double zoom)
+    {
+        return (int)(centerNode.y + p.y/zoom);
+    }
     
     public String getLabel() {
         return label;

@@ -72,7 +72,7 @@ public class GraphPanel extends JPanel {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if((zoom > minZoom && e.getUnitsToScroll() < 0) || (zoom < maxZoom && e.getUnitsToScroll() > 0)) {
-                    zoom+=(((double)e.getUnitsToScroll())/100);
+                    zoom+=zoom/(((double)e.getUnitsToScroll()))/4;
                 }
             }
         });
@@ -184,11 +184,6 @@ public class GraphPanel extends JPanel {
         return (int)(this.getWidth()/40 /zoom);
     }
     
-    public int getNodeDistance()
-    {
-        return getNodeSize()*5;
-    }
-    
     public double getAngle(Point p1 , Point p2)
     {
         return 180+Math.toDegrees(Math.atan2((p1.x-p2.x),(p1.y-p2.y)));
@@ -199,23 +194,21 @@ public class GraphPanel extends JPanel {
         return Math.sqrt(Math.pow((p1.x-p2.x), 2)+Math.pow((p1.y-p2.y), 2))*zoom;   
     }
     
-    public Point getPointFromAngleDistance(double angle, double distance)
-    {
-        Point p = new Point();
-        p.x = centerNode.x + (int)(Math.sin(Math.toRadians(angle))*distance / zoom);
-        p.y = centerNode.y + (int)(Math.cos(Math.toRadians(angle))*distance / zoom);
-        return p;
-    }
-    
     private void databaseError(int error_id)
     {
-        System.out.println("DB_ERROR");
+        System.out.println("DB_ERROR"+error_id);
+    }
+    
+    private boolean showNodes()
+    {
+        return zoom<5;
     }
     
     
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
+        Point p;
         g2.clearRect(0,0,this.getSize().width,this.getSize().height);
         g2.drawLine((int)(centerNode.x-15/zoom), (int)(centerNode.y), (int)(centerNode.x+15/zoom), (int)(centerNode.y));
         g2.drawLine((int)(centerNode.x), (int)(centerNode.y-15/zoom), (int)(centerNode.x), (int)(centerNode.y+15/zoom));
@@ -224,21 +217,24 @@ public class GraphPanel extends JPanel {
         }
         
         if(selectedNode!=null){
-            g2.drawLine(selectedNode.getPosition(getCenterNode(),zoom).x, selectedNode.getPosition(getCenterNode(),zoom).y, mousePos.x, mousePos.y);
+            g2.drawLine(selectedNode.getPosition(getCenterNode(),zoom).x, selectedNode.getY(getCenterNode(),zoom), mousePos.x, mousePos.y);
         }
         
         for (Node n:nodes) {
-            Point p = n.getPosition(getCenterNode(),zoom);              
+            int x = n.getX(centerNode, zoom);
+            int y = n.getY(centerNode, zoom);
+           // p = n.getPosition(getCenterNode(),zoom);              
 
             for(Node subnode:n.nodes) {
-                g2.drawLine(subnode.getPosition(getCenterNode(),zoom).x, subnode.getPosition(getCenterNode(),zoom).y, p.x, p.y);
+                g2.drawLine(subnode.getX(getCenterNode(),zoom), subnode.getY(getCenterNode(),zoom), x,y);
             }
         }
         
         
         for (Node n:nodes)
         {     
-            Point p = n.getPosition(getCenterNode(),zoom);
+            int x = n.getX(centerNode, zoom);
+            int y = n.getY(centerNode, zoom);
             if(n==selectedNode)
                 g2.setColor(Color.green);
             else if(n==snappedNode) {
@@ -247,15 +243,20 @@ public class GraphPanel extends JPanel {
                 else
                     g2.setColor(Color.blue);
             }
-            g2.fillOval(p.x-getNodeSize()-2,p.y-getNodeSize()-2,getNodeSize()*2+4, getNodeSize()*2+4);
+            //int ns = getNodeSize();
+            g2.fillOval(x-getNodeSize()-2,y-getNodeSize()-2,getNodeSize()*2+4, getNodeSize()*2+4);
             g2.setColor(n.color);
-            g2.fillOval(p.x-getNodeSize(),p.y-getNodeSize(),getNodeSize()*2, getNodeSize()*2);
+            g2.fillOval(x-getNodeSize(),y-getNodeSize(),getNodeSize()*2, getNodeSize()*2);
             g2.setColor(nodeBorderColor);
 
-            g2.drawString(n.getLabel(), n.getPosition(getCenterNode(),zoom).x-g.getFontMetrics().stringWidth(n.getLabel())/2, n.getPosition(getCenterNode(),zoom).y+3);     
+            if(showNodes())
+                g2.drawString(n.getLabel(), n.getX(getCenterNode(),zoom)-g.getFontMetrics().stringWidth(n.getLabel())/2, n.getY(getCenterNode(),zoom)+3);     
         }
         
-        g2.fillOval(getMiddle().x, getMiddle().y, 10, 10);
+        if(!showNodes())
+            g2.drawString("Network", getMiddle().x, getMiddle().y);
+        
+        g2.drawString("Zoom: " + zoom, 5, getSize().height-20);
     }
     
     public boolean areConnected(Node n1, Node n2)
