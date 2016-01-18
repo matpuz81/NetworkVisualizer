@@ -45,6 +45,7 @@ public class DBCore {
         System.out.println(createDbStructure());
         //System.out.println(this.cleanDb());
         //insertExampleData();
+        addNodesToPanelFromDb();
         
     }
     
