@@ -146,6 +146,31 @@ public class DBCore {
        
     }
     
+    public ArrayList<Network> getAllNetwork() {
+        try {
+            
+            ArrayList<Network> output = new ArrayList<Network>();
+            
+            Statement stmt = connection.createStatement();
+            
+            String sql = "select * from network";
+            ResultSet res = stmt.executeQuery(sql);
+            while(res.next()) {
+                Network net = new Network();
+                net.setParams(res.getString("name"), res.getString("description"), res.getString("networktype_id_net_type"), res.getString("networktopology_name"), res.getInt("comunicationprotocol_id"));
+                net.setId(res.getInt("id_network"));
+                output.add(net);
+            }
+            
+            stmt.close();
+            
+            return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
     public int addNetwork(Network net) throws Exception {
         try {
             Statement stmt = connection.createStatement();
