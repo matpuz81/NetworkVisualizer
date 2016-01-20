@@ -212,6 +212,46 @@ public class DBCore {
         }
     }
     
+    public boolean addNetworkConnection(Node node, Network net, String velocety) throws Exception {
+        try {
+            //Look if node is present in db
+            Statement stmt = connection.createStatement();
+            String sql = "select * from node where id_node = "+node.getId()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if(!res.next()) {
+                throw new Exception("Node not found in DB");
+            }
+            //Test if network is present
+            sql = "select * from network where id_network = "+net.getId()+";";
+            res = stmt.executeQuery(sql);
+            if(!res.next()) {
+                throw new Exception("Network not found in DB");
+            }
+            
+            sql = "insert into networkconnection(node_id, network_id_network, velocety) values("+node.getId()+", "+net.getId()+", '"+velocety+"');";
+            stmt.executeUpdate(sql);
+            
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+    public boolean deleteNetworkConnection(Node node, Network net) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "delete from networkconnection where node_id = "+node.getId()+" AND network_id_network = "+net.getId()+";";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
     public boolean deleteNodeConnection(Node n1, Node n2) {
          try {
             Statement stmt = connection.createStatement();
@@ -370,6 +410,7 @@ public class DBCore {
                     + "    REFERENCES Users(id_user)\n"
                     + ");\n"
                     + " \n"
+                    /*
                     + "CREATE TABLE IF NOT EXISTS NetworkLink (\n"
                     + "  id_net_link INT NOT NULL,\n"
                     + "  type VARCHAR(45) NULL,\n"
@@ -377,6 +418,7 @@ public class DBCore {
                     + "  PRIMARY KEY (id_net_link)\n"
                     + ");\n"
                     + " \n"
+                    */
                     + "CREATE TABLE IF NOT EXISTS Node (\n"
                     + "  id_node SERIAL,\n"
                     + "  ip_address VARCHAR(15) NOT NULL,\n"
@@ -427,14 +469,12 @@ public class DBCore {
                     + "CREATE TABLE IF NOT EXISTS NetworkConnection (\n"
                     + "  Node_id INT NOT NULL,\n"
                     + "  Network_id_network INT NOT NULL,\n"
-                    + "  NetworkLink_id_net_link INT NOT NULL,\n"
-                    + "  PRIMARY KEY (Node_id, Network_id_network, NetworkLink_id_net_link),\n"
+                    + "  velocety VARCHAR(50),\n"
+                    + "  PRIMARY KEY (Node_id, Network_id_network),\n"
                     + "    FOREIGN KEY (Node_id)\n"
                     + "    REFERENCES Node(id_node),\n"
                     + "    FOREIGN KEY (Network_id_network)\n"
-                    + "    REFERENCES Network(id_network),\n"
-                    + "    FOREIGN KEY (NetworkLink_id_net_link)\n"
-                    + "    REFERENCES NetworkLink(id_net_link)\n"
+                    + "    REFERENCES Network(id_network)\n"
                     + ");";
             stmt.executeUpdate(sql);
             stmt.close();
@@ -457,7 +497,9 @@ public class DBCore {
                     + "DROP TABLE Network;\n"
                     + "DROP TABLE NodeConnection;\n"
                     + "DROP TABLE Node;\n"
+                    /*
                     + "DROP TABLE NetworkLink;\n"
+                    */
                     + "DROP TABLE ConsumedBy;\n"
                     + "DROP TABLE Service;\n"
                     + "DROP TABLE Users;\n"
