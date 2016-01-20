@@ -330,14 +330,33 @@ public class DBCore {
         return createDbStructure();
     }
     
+    public Network getNetworkById(int id) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from network where id_network = "+id+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if(res.next()) {
+                Network net = new Network();
+                net.setParams(res.getString("name"), res.getString("description"), res.getString("networktype_id_net_type"), res.getString("networktopology_name"), res.getInt("comunicationprotocol_id"));
+                net.setId(res.getInt("id_network"));
+                return net;
+            } else {
+                return null;
+            }
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+            return null;
+        }   
+    }
+    
     public boolean addNodesToPanelFromDb() {
         try {
             //Add all Nodes of the DB to the panel
             Statement stmt = connection.createStatement();
-            String sql = "Select * from node;";
+            String sql = "select * from networkconnection netcon, node no, network net where no.id_node = netcon.node_id AND net.id_network = network_id_network;";
             ResultSet res = stmt.executeQuery(sql);
             while(res.next()) {
-                NetworkVisualizer.panel.addNodeFromDB(null, res.getInt("id_node"), res.getDouble("angle"), res.getDouble("distance"), res.getString("ip_address"));
+                NetworkVisualizer.panel.addNodeFromDB(getNetworkById(res.getInt("network_id_network")), res.getInt("id_node"), res.getDouble("angle"), res.getDouble("distance"), res.getString("ip_address"));
             }
             stmt.close();
             
