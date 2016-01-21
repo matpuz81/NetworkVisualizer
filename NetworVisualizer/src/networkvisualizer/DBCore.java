@@ -43,7 +43,7 @@ public class DBCore {
         }
         System.out.println("Opened database successfully");
         System.out.println(createDbStructure());
-       // System.out.println(this.cleanDb());
+        //System.out.println(this.cleanDb());
         //insertExampleData();
         addNodesToPanelFromDb();
         
@@ -331,12 +331,17 @@ public class DBCore {
     }
     
     public Network getNetworkById(int id) {
+        Network net = NetworkVisualizer.panel.getNetworkById(id);
+        if(net != null) {
+            return net;
+        }
+        
         try {
             Statement stmt = connection.createStatement();
             String sql = "select * from network where id_network = "+id+";";
             ResultSet res = stmt.executeQuery(sql);
             if(res.next()) {
-                Network net = new Network();
+                net = new Network();
                 net.setParams(res.getString("name"), res.getString("description"), res.getString("networktype_id_net_type"), res.getString("networktopology_name"), res.getInt("comunicationprotocol_id"));
                 net.setId(res.getInt("id_network"));
                 return net;
