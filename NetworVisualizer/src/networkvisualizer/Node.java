@@ -123,4 +123,8 @@ public class Node {
     public double getDistance() {
         return this.distance;
     }
+    
+    public int getNetworkId() {
+        return this.network.getId();
+    }
 }

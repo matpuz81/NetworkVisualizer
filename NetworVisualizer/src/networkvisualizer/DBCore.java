@@ -282,7 +282,7 @@ public class DBCore {
     public int addNode(Node n) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "INSERT into node(ip_address, angle, distance) values('"+n.getLabel()+"',"+n.getAngle()+", "+n.getDistance()+") returning(id_node);";
+            String sql = "INSERT into node(ip_address, network_id_network, angle, distance) values('"+n.getLabel()+"', "+n.getNetworkId()+","+n.getAngle()+", "+n.getDistance()+") returning(id_node);";
             ResultSet res = stmt.executeQuery(sql);
             res.next(); //By calling one time next the first tuple became selected
             int id = res.getInt(1); //The number passing the get method represents the collum.
@@ -353,7 +353,7 @@ public class DBCore {
         try {
             //Add all Nodes of the DB to the panel
             Statement stmt = connection.createStatement();
-            String sql = "select * from networkconnection netcon, node no, network net where no.id_node = netcon.node_id AND net.id_network = network_id_network;";
+            String sql = "select * from node no, network net where no.network_id_network = net.id_network;";
             ResultSet res = stmt.executeQuery(sql);
             while(res.next()) {
                 NetworkVisualizer.panel.addNodeFromDB(getNetworkById(res.getInt("network_id_network")), res.getInt("id_node"), res.getDouble("angle"), res.getDouble("distance"), res.getString("ip_address"));
@@ -438,27 +438,6 @@ public class DBCore {
                     + ");\n"
                     + " \n"
                     */
-                    + "CREATE TABLE IF NOT EXISTS Node (\n"
-                    + "  id_node SERIAL,\n"
-                    + "  ip_address VARCHAR(15) NOT NULL,\n"
-                    + "  angle REAL,\n"
-                    + "  distance REAL,\n"
-                    + "  status VARCHAR(45) NULL,\n"
-                    + "  PRIMARY KEY (id_node)\n"
-                    + ");\n"
-                    + " \n"
-                    + "CREATE TABLE IF NOT EXISTS NodeConnection (\n"
-                    + "  id1 INT NOT NULL,\n"
-                    + "  id2 INT NOT NULL,\n"
-                    + "  PRIMARY KEY (id1, id2),\n"
-                    + "   \n"
-                    + "    FOREIGN KEY (id1)\n"
-                    + "    REFERENCES Node(id_node),\n"
-                    + "     \n"
-                    + "    FOREIGN KEY (id1)\n"
-                    + "    REFERENCES Node(id_node)\n"
-                    + ");\n"
-                    + "   \n"
                     + "CREATE TABLE IF NOT EXISTS Network (\n"
                     + "  id_network SERIAL,\n"
                     + "  Name VARCHAR(45) NULL,\n"
@@ -475,6 +454,30 @@ public class DBCore {
                     + "  REFERENCES ComunicationProtocol(protocol_id)\n"
                     + ");\n"
                     + " \n"
+                     + "CREATE TABLE IF NOT EXISTS Node (\n"
+                    + "  id_node SERIAL,\n"
+                    + "  ip_address VARCHAR(15) NOT NULL,\n"
+                    + "  network_id_network INT NOT NULL,\n"
+                    + "  angle REAL,\n"
+                    + "  distance REAL,\n"
+                    + "  status VARCHAR(45) NULL,\n"
+                    + "  PRIMARY KEY (id_node),\n"
+                    + "    FOREIGN KEY (network_id_network)\n"
+                    + "    REFERENCES Network(id_network)\n"
+                    + ");\n"
+                    + " \n"
+                    + "CREATE TABLE IF NOT EXISTS NodeConnection (\n"
+                    + "  id1 INT NOT NULL,\n"
+                    + "  id2 INT NOT NULL,\n"
+                    + "  PRIMARY KEY (id1, id2),\n"
+                    + "   \n"
+                    + "    FOREIGN KEY (id1)\n"
+                    + "    REFERENCES Node(id_node),\n"
+                    + "     \n"
+                    + "    FOREIGN KEY (id1)\n"
+                    + "    REFERENCES Node(id_node)\n"
+                    + ");\n"
+                    + "   \n"
                     + "CREATE TABLE IF NOT EXISTS Offers (\n"
                     + "  Network_id_network INT NOT NULL,\n"
                     + "  Service_code INT NOT NULL,\n"
@@ -485,6 +488,7 @@ public class DBCore {
                     + "    REFERENCES Service (code)\n"
                     + ");\n"
                     + " \n"
+                    /*
                     + "CREATE TABLE IF NOT EXISTS NetworkConnection (\n"
                     + "  Node_id INT NOT NULL,\n"
                     + "  Network_id_network INT NOT NULL,\n"
@@ -494,7 +498,7 @@ public class DBCore {
                     + "    REFERENCES Node(id_node),\n"
                     + "    FOREIGN KEY (Network_id_network)\n"
                     + "    REFERENCES Network(id_network)\n"
-                    + ");";
+                    + ");";*/;
             stmt.executeUpdate(sql);
             stmt.close();
 
@@ -511,11 +515,11 @@ public class DBCore {
     private boolean deleteDbStructure() {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "DROP TABLE NetworkConnection;\n"
-                    + "DROP TABLE Offers;\n"
-                    + "DROP TABLE Network;\n"
+            String sql = "DROP TABLE Offers;\n"
                     + "DROP TABLE NodeConnection;\n"
                     + "DROP TABLE Node;\n"
+                    
+                    + "DROP TABLE Network;\n"
                     /*
                     + "DROP TABLE NetworkLink;\n"
                     */
