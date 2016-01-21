@@ -18,6 +18,8 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.LinkedList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 /**
@@ -27,6 +29,8 @@ import javax.swing.SwingUtilities;
 public class GraphPanel extends JPanel {
     
     LinkedList<Node> nodes = new LinkedList();
+    LinkedList<NodeLink> nodeLink = new LinkedList();
+    //LinkedList<Network> networks = new LinkedList();
     Color nodeColor = Color.white;
     Color nodeBorderColor = Color.black;
     Color possibleColor = Color.lightGray;
@@ -92,14 +96,18 @@ public class GraphPanel extends JPanel {
         
         
         Node tmpNode = new Node(angle,distance,getNodeSize(), "192.168.1." + (nodes.size()+1));
+        addNodeToDb(tmpNode);
         if(connectedNode != null) {
-            tmpNode.nodes.add(connectedNode);       //If the node is connected to another node, add the other node to the list
+            
+            addNodeConnection(tmpNode,connectedNode,"",1);
             tmpNode.setNetwork(connectedNode.getNetwork());
         }
-        NodeParameters createPanel = new NodeParameters(tmpNode);
-        createPanel.setVisible(true);
+        else
+        {
+            
+            tmpNode.setNetwork(createNetwork());
+        }
     }
-    
     
     public void addNodeToDb(Node n) { //final add node function, adds it to the database and list
         
@@ -108,11 +116,6 @@ public class GraphPanel extends JPanel {
         if(id!=-1)
         {          
             n.setId(id);
-            if(!n.nodes.isEmpty())      //check if node is connected to another node, if so then add the connection
-            {
-                Node connectedNode = n.nodes.getFirst();
-                addNodeConnection(n,connectedNode);
-            }
             nodes.add(n);
         }
         else
@@ -128,34 +131,38 @@ public class GraphPanel extends JPanel {
         nodes.add(tmpNode);
     }
     
-    public void addNodeConnection(Node n1, Node n2)
+    public void addNodeConnection(Node n1, Node n2,String type, double velocity)
     {
-        if(!n1.nodes.contains(n2))
-            n1.nodes.add(n2);
-        if(!n2.nodes.contains(n1))
-            n2.nodes.add(n1);
+        nodeLink.add(new NodeLink(n1,n2,type,velocity));
         NetworkVisualizer.DB.addNodeConnection(n1, n2);
     }
     
-    public void connectNodesById(int id1, int id2)
+    public void connectNodesById(int id1, int id2,String type, double velocity)
     {
         Node n1=getNodeById(id1), n2=getNodeById(id2);
         if(n1 != null && n2 != null)
         {
-            n1.nodes.add(n2);
-            n2.nodes.add(n1);
+            addNodeConnection(n1,n2,type,velocity);
         }
     }
     
     public void deleteNode(Node n)
     {
-        if(NetworkVisualizer.DB.deleteNode(n))
+        LinkedList<NodeLink> toRemove = new LinkedList();
+        for(NodeLink l:nodeLink)
         {
-            for(Node nx:n.nodes){
-                nx.nodes.remove(n);
+            if(l.n1 == n || l.n2 == n)
+            {
+                toRemove.add(l);
+                NetworkVisualizer.DB.deleteNodeConnection(l.n1, l.n2);
             }
-            nodes.remove(n);
         }
+        
+        NetworkVisualizer.DB.deleteNode(n);
+                
+
+        nodeLink.removeAll(toRemove);
+        nodes.remove(n);
     }
     
     public Node getNodeById(int id)
@@ -168,6 +175,23 @@ public class GraphPanel extends JPanel {
         return null;
     }
     
+    public Network createNetwork()
+    {
+        Network net=null;
+        try {
+            net = new Network();
+            int id = NetworkVisualizer.DB.addNetwork(net);
+            if(id!=-1)
+            {
+                net.setId(id);
+                //networks.add(net);
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(GraphPanel.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return net;
+    }
+    
     public LinkedList<Network> getNetworks()
     {
         LinkedList<Network> networks = new LinkedList();
@@ -178,6 +202,49 @@ public class GraphPanel extends JPanel {
         }
         return networks;
     }
+    
+    
+    public boolean areConnected(Node n1, Node n2)
+    {
+        return getConnection(n1,n2) != null;
+    }
+    
+    public LinkedList<Node> getConnectedNodes(Node n)
+    {
+        if(n == null) return null;
+        LinkedList<Node> tmp = new LinkedList();
+        
+        for(NodeLink l:nodeLink)
+        {
+            if(l.n1 == n)
+                tmp.add(l.n2);
+            else if(l.n2 == n)
+                tmp.add(l.n1);
+        }
+        return tmp;
+    }
+    
+    public NodeLink getConnection(Node n1, Node n2)
+    {
+        if(n1 == null || n2 == null)
+            return null;
+        
+        for(NodeLink l:nodeLink)
+        {
+            if(l.n1 == n1 && l.n2 == n2 || l.n1 == n2 && l.n2 == n1)
+            {
+                return l;
+            }
+        }
+        return null;
+    }
+    
+    public void removeConnection(Node n1, Node n2)
+    {
+        NodeLink l = getConnection(n1,n2);
+        nodeLink.remove(l);
+    }
+    
     
     public int getNodeSize()
     {
@@ -208,7 +275,9 @@ public class GraphPanel extends JPanel {
     @Override
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
-        Point p;
+        
+        if(!showNodes())     
+            g2.setColor(Color.lightGray);
         g2.clearRect(0,0,this.getSize().width,this.getSize().height);
         g2.drawLine((int)(centerNode.x-15/zoom), (int)(centerNode.y), (int)(centerNode.x+15/zoom), (int)(centerNode.y));
         g2.drawLine((int)(centerNode.x), (int)(centerNode.y-15/zoom), (int)(centerNode.x), (int)(centerNode.y+15/zoom));
@@ -217,24 +286,19 @@ public class GraphPanel extends JPanel {
         }
         
         if(selectedNode!=null){
-            g2.drawLine(selectedNode.getPosition(getCenterNode(),zoom).x, selectedNode.getY(getCenterNode(),zoom), mousePos.x, mousePos.y);
+            g2.drawLine(selectedNode.getPosition(getCenterNode(),zoom).x, selectedNode.getPosition(getCenterNode(),zoom).y, mousePos.x, mousePos.y);
         }
         
-        for (Node n:nodes) {
-            int x = n.getX(centerNode, zoom);
-            int y = n.getY(centerNode, zoom);
-           // p = n.getPosition(getCenterNode(),zoom);              
-
-            for(Node subnode:n.nodes) {
-                g2.drawLine(subnode.getX(getCenterNode(),zoom), subnode.getY(getCenterNode(),zoom), x,y);
-            }
+        for (NodeLink l:nodeLink)
+        {
+            g2.drawLine(l.n1.getPosition(getCenterNode(),zoom).x, l.n1.getPosition(getCenterNode(),zoom).y, l.n2.getPosition(getCenterNode(),zoom).x, l.n2.getPosition(getCenterNode(),zoom).y);
         }
-        
         
         for (Node n:nodes)
         {     
-            int x = n.getX(centerNode, zoom);
-            int y = n.getY(centerNode, zoom);
+            int x = n.getPosition(centerNode, zoom).x;
+            int y = n.getPosition(centerNode, zoom).y;
+            g2.setColor(n.getNetwork().getColor().darker());
             if(n==selectedNode)
                 g2.setColor(Color.green);
             else if(n==snappedNode) {
@@ -243,27 +307,27 @@ public class GraphPanel extends JPanel {
                 else
                     g2.setColor(Color.blue);
             }
-            //int ns = getNodeSize();
             g2.fillOval(x-getNodeSize()-2,y-getNodeSize()-2,getNodeSize()*2+4, getNodeSize()*2+4);
-            g2.setColor(n.color);
+            g2.setColor(n.getNetwork().getColor());
+            
+            if(n==selectedNode)
+                g2.setColor(n.getNetwork().getColor().brighter());
             g2.fillOval(x-getNodeSize(),y-getNodeSize(),getNodeSize()*2, getNodeSize()*2);
             g2.setColor(nodeBorderColor);
 
             if(showNodes())
-                g2.drawString(n.getLabel(), n.getX(getCenterNode(),zoom)-g.getFontMetrics().stringWidth(n.getLabel())/2, n.getY(getCenterNode(),zoom)+3);     
+                g2.drawString(n.getLabel(), n.getPosition(getCenterNode(),zoom).x-g.getFontMetrics().stringWidth(n.getLabel())/2, n.getPosition(getCenterNode(),zoom).y+3);     
         }
         
         if(!showNodes())
-            g2.drawString("Network", getMiddle().x, getMiddle().y);
+        {
+            for(Network net:getNetworks())
+            {
+                g2.drawString(net.getName(), getMiddle(net).x-g.getFontMetrics().stringWidth(net.getName())/2, getMiddle(net).y+4);
+            }
+        }
         
         g2.drawString("Zoom: " + zoom, 5, getSize().height-20);
-    }
-    
-    public boolean areConnected(Node n1, Node n2)
-    {
-        if(n1 == null || n2 == null)
-            return false;
-        return n1.nodes.contains(n2) || n2.nodes.contains(n1);
     }
     
     public void checkForHover(MouseEvent event){
@@ -276,9 +340,10 @@ public class GraphPanel extends JPanel {
             centerNode.setLocation(p);
         }
         
+        /*
         if(selection != null) {
             selection.setBounds( (int)Math.min(anchor.x,event.getX()), (int)Math.min(anchor.y,event.getY()),(int)Math.abs(event.getX()-anchor.x), (int)Math.abs(event.getY()-anchor.y));
-        }
+        }*/
         
         for (Node n:nodes) {
             Point p = n.getPosition(getCenterNode(),zoom);
@@ -343,9 +408,15 @@ public class GraphPanel extends JPanel {
                 "Do you want to connect " + selectedNode.getLabel() + " to " + snappedNode.getLabel() + "?",
                 "Connect the nodes?",JOptionPane.YES_NO_OPTION);
                 if(n==0) {
-                    addNodeConnection(selectedNode,snappedNode);
+                    addNodeConnection(selectedNode,snappedNode,"",1);
                     selectedNode=null;
                 }
+            }
+            else if(selectedNode != null)       //Node is selected and clicked again, which opens its parameters 
+            {
+                NodeParameters params = new NodeParameters(selectedNode);
+                selectedNode = null;
+                params.setVisible(true);
             }
             else {      //Left mousebutton clicked anywhere on the panel
                 selection = new Rectangle(event.getPoint());
@@ -354,29 +425,25 @@ public class GraphPanel extends JPanel {
         repaint();
     }
     
-    public Point getMiddle()
+    public Point getMiddle(Network net)
     {
         double middleAngle=0,middleDistance=0;
         Point p=new Point(0,0);
+        int cnt=0;
         for(Node n:nodes)
         {
-            Point np = n.getPosition(getCenterNode(), zoom);
-            /*
-            middleAngle+=n.getAngle();
-            if(n.getAngle()<180)
-            middleDistance+=n.getDistance();
-            else
-            middleDistance-=n.getDistance();
-                    */
-            p.x += np.x;
-            p.y += np.y;
+            if(n.getNetwork() == net)
+            {
+                Point np = n.getPosition(getCenterNode(), zoom);
+                p.x += np.x;
+                p.y += np.y;
+                cnt++;
+            }
                 
         }
-        p.x/=nodes.size();
-        p.y/=nodes.size();
-        //middleAngle/=(nodes.size());
-        //middleDistance/=(nodes.size());
-        return p;//getPointFromAngleDistance(middleAngle,middleDistance);
+        p.x/=cnt;
+        p.y/=cnt;
+        return p;
     }
     
     

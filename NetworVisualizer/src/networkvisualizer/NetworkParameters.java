@@ -22,6 +22,7 @@ import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
@@ -43,6 +44,7 @@ public class NetworkParameters extends JFrame {
     JPanel centerPanel = new JPanel();
     JPanel leftPanel = new JPanel();
     LinkedList<Node> nodesToRemove = new LinkedList();
+    JSlider colorSlider;
     JButton cancelButton, saveButton;
     JLabel nameInputLabel;
     JTextArea descriptionInput;
@@ -62,7 +64,6 @@ public class NetworkParameters extends JFrame {
         nameInput.setText(net.getName());
         
         descriptionInput = new JTextArea(5,20);
-        
         
         listPanel.setBorder(BorderFactory.createTitledBorder("Connected Nodes:"));
 
@@ -125,8 +126,11 @@ public class NetworkParameters extends JFrame {
     
     void save() {
         
-        net.setParams(nameInput.getText(), descriptionInput.getText(), "LAN", "Ring", -1);
+        net.setParams(nameInput.getText(), descriptionInput.getText(), "LAN", "star", 1);
         NetworkVisualizer.panel.repaint();
+        
+        //if(!NetworkVisualizer.panel.getNetworks().contains(net))
+        //}
         //net.setParams(labelInput.getText());
         /*
         if(!parentPanel.nodes.contains(node))

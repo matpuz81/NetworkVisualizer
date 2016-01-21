@@ -5,12 +5,8 @@
  */
 package networkvisualizer;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 
 /**
@@ -18,7 +14,7 @@ import javax.swing.JPopupMenu;
  * @author chef
  */
 class PanelMenu extends JPopupMenu {
-    JMenuItem addNode,properties;
+    JMenuItem addNode,addNetwork,properties;
     Node node;
     MouseEvent event;
     

@@ -21,11 +21,8 @@ public class Node {
     private Point p;
     private double angle,distance;
     private String label;
-    Color color=Color.red;
-    LinkedList<Node>nodes = new LinkedList();
     private final int size;
     private boolean doFollowMouse=false;
-    private double prevAngle=0, prevDistance=0;
     
     public Node(double angle, double distance, int size, String label)
     {
@@ -42,6 +39,11 @@ public class Node {
     public void setId(int id)
     {
         this.id=id;
+    }
+    
+    public LinkedList<Node> getConnectedNodes()
+    {
+        return NetworkVisualizer.panel.getConnectedNodes(this);
     }
     
     public void setNetwork(Network net)
@@ -89,24 +91,11 @@ public class Node {
     
     public Point getPosition(Point centerNode, double zoom)
     {        
-        
-        if(!doFollowMouse)
-        {
-            //p.x = centerNode.x + (int)(Math.sin(Math.toRadians(angle))*distance / zoom);
-           // p.y = centerNode.y + (int)(Math.cos(Math.toRadians(angle))*distance / zoom);
+        if(doFollowMouse) {
+            return p;
         }
         return new Point((int)(centerNode.x + p.x/zoom), (int)(centerNode.y + p.y / zoom));
     }  
-    
-    public int getX(Point centerNode, double zoom)
-    {
-        return (int)(centerNode.x + p.x/zoom);
-    }
-        
-    public int getY(Point centerNode, double zoom)
-    {
-        return (int)(centerNode.y + p.y/zoom);
-    }
     
     public String getLabel() {
         return label;

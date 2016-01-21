@@ -41,6 +41,9 @@ class MenuListener implements ActionListener{
                 if(i==0)
                     parent.deleteNode(node);
                 break;
+            case "addNetwork":
+                parent.createNetwork();
+                break;
             case "nodeProperties":
                 NodeParameters paramsFrame = new NodeParameters(node);
                 paramsFrame.setVisible(true);
