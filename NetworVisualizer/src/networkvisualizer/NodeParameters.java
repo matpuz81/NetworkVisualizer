@@ -7,6 +7,9 @@ package networkvisualizer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -43,10 +46,12 @@ public class NodeParameters extends JFrame {
     JPanel southPanel = new JPanel();
     JPanel centerPanel = new JPanel();
     JPanel leftPanel = new JPanel();
-    JPanel networkButtonsPanel = new JPanel();
+    JPanel parameterPanel = new JPanel();
+    JPanel parameterLeftPanel = new JPanel();
+    JPanel parameterRightPanel = new JPanel();
     LinkedList<Node> nodesToRemove = new LinkedList();
     JButton cancelButton, saveButton,networkParamButton,addNetworkButton;
-    JLabel labelInputLabel;
+    JLabel labelInputLabel, networkLabel;
     JTextField labelInput;
     
     public NodeParameters(Node node)
@@ -57,18 +62,14 @@ public class NodeParameters extends JFrame {
         
         mainPanel.setLayout(new BorderLayout());
         leftPanel.setLayout(new BoxLayout(leftPanel,BoxLayout.Y_AXIS));
-        
+        parameterPanel.setLayout(new GridLayout(3,2,20,0));
+
         labelInputLabel = new JLabel("Label:");
+        networkLabel = new JLabel("Network:");
         labelInput = new JTextField(20);
         labelInput.setText(node.getLabel());
-
         
-        
-        
-        networkList.setActionCommand("changeNetwork");
-        networkList.addActionListener(new NodeParametersListener());
-        
-        networkParamButton = new JButton("Network Parameters");
+        networkParamButton = new JButton(node.getNetwork().getName());
         networkParamButton.setActionCommand("openNetworkParam");
         networkParamButton.addActionListener(new NodeParametersListener());
         
@@ -76,8 +77,12 @@ public class NodeParameters extends JFrame {
         addNetworkButton.setActionCommand("addNetwork");
         addNetworkButton.addActionListener(new NodeParametersListener());
         
-        networkButtonsPanel.add(addNetworkButton);
-        networkButtonsPanel.add(networkParamButton);
+        
+        
+        parameterPanel.add(labelInputLabel);
+        parameterPanel.add(networkLabel);
+        parameterPanel.add(labelInput);
+        parameterPanel.add(networkParamButton);
         
         addList();
         
@@ -91,10 +96,7 @@ public class NodeParameters extends JFrame {
         southPanel.add(cancelButton);
         southPanel.add(saveButton);
         
-        leftPanel.add(labelInputLabel);
-        leftPanel.add(labelInput);
-        leftPanel.add(networkList);
-        leftPanel.add(networkButtonsPanel);
+        leftPanel.add(parameterPanel);
         
         centerPanel.add(leftPanel);
         centerPanel.add(listPanel);
@@ -135,7 +137,7 @@ public class NodeParameters extends JFrame {
         }
         
         nodeListModel.clear();
-        if(node.nodes.isEmpty() || node.nodes.size() == nodesToRemove.size())
+        if(node.getConnectedNodes().isEmpty() || node.getConnectedNodes().size() == nodesToRemove.size())
         {
             nodeListModel.addElement("No connected nodes");
             nodesList.setEnabled(false);
@@ -143,7 +145,7 @@ public class NodeParameters extends JFrame {
         
         else
         {
-            for(Node n:node.nodes){
+            for(Node n:node.getConnectedNodes()){
                 if(!nodesToRemove.contains(n))
                     nodeListModel.addElement(n.getLabel());
             }
@@ -151,24 +153,22 @@ public class NodeParameters extends JFrame {
     }
     
     void save() {
-        
+        /*
         if(node.getNetwork()==null)
         {
             
         }
-        else
+        else*/
         {
             node.setParams(labelInput.getText());
-            if(!parentPanel.nodes.contains(node))
+            //if(!parentPanel.nodes.contains(node))
             {
-                parentPanel.addNodeToDb(node);
             }
 
 
             for(Node n:nodesToRemove) {
                 System.out.println(n.getLabel());
-                n.nodes.remove(node);
-                node.nodes.remove(n);
+                NetworkVisualizer.panel.removeConnection(node,n);
             }
 
             parentPanel.repaint();
@@ -182,7 +182,7 @@ public class NodeParameters extends JFrame {
     }
     
     Node getSelectedNode() {
-        return node.nodes.get(nodesList.getSelectedIndex());
+        return node.getConnectedNodes().get(nodesList.getSelectedIndex());
     }
     
     void checkMousePress(MouseEvent e)
