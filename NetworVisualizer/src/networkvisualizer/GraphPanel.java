@@ -96,33 +96,30 @@ public class GraphPanel extends JPanel {
         
         
         Node tmpNode = new Node(angle,distance,getNodeSize(), "192.168.1." + (nodes.size()+1));
-        addNodeToDb(tmpNode);
         if(connectedNode != null) {
-            
-            addNodeConnection(tmpNode,connectedNode,"",1);
             tmpNode.setNetwork(connectedNode.getNetwork());
         }
-        else
-        {
-            
+        else {
             tmpNode.setNetwork(createNetwork());
         }
-    }
-    
-    public void addNodeToDb(Node n) { //final add node function, adds it to the database and list
         
-        int id = NetworkVisualizer.DB.addNode(n);
+        int id = NetworkVisualizer.DB.addNode(tmpNode);
 
         if(id!=-1)
         {          
-            n.setId(id);
-            nodes.add(n);
+            tmpNode.setId(id);
+            nodes.add(tmpNode);
+            if(connectedNode != null) {
+                addNodeConnection(tmpNode,connectedNode,"",1);
+            }
         }
         else
         {
             databaseError(0);
         }
+
     }
+    
     
     public void addNodeFromDB(Network net, int id, double angle, double distance, String label) {
         Node tmpNode = new Node(angle,distance,getNodeSize(),label);
@@ -142,7 +139,7 @@ public class GraphPanel extends JPanel {
         Node n1=getNodeById(id1), n2=getNodeById(id2);
         if(n1 != null && n2 != null)
         {
-            addNodeConnection(n1,n2,type,velocity);
+            nodeLink.add(new NodeLink(n1,n2,type,velocity));
         }
     }
     
@@ -190,6 +187,15 @@ public class GraphPanel extends JPanel {
             Logger.getLogger(GraphPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
         return net;
+    }
+    
+    public Network getNetworkById(int id)
+    {
+        for(Network n:getNetworks()) {
+            if(n.getId() == id )
+                return n;
+        }
+        return null;
     }
     
     public LinkedList<Network> getNetworks()
@@ -408,6 +414,21 @@ public class GraphPanel extends JPanel {
                 "Do you want to connect " + selectedNode.getLabel() + " to " + snappedNode.getLabel() + "?",
                 "Connect the nodes?",JOptionPane.YES_NO_OPTION);
                 if(n==0) {
+                    if(snappedNode.getNetwork() != selectedNode.getNetwork())
+                    {
+                        n = JOptionPane.showConfirmDialog(this,
+                        "Attention!\n" + snappedNode.getLabel() + " is part of " + snappedNode.getNetwork().getName() + 
+                        "\nWould you like to merge " + snappedNode.getNetwork().getName() + " into "+ selectedNode.getNetwork().getName() + "?",
+                        "Merge the networks?",JOptionPane.YES_NO_OPTION);
+                        if(n==0)
+                        {
+                            for(Node node:snappedNode.getNetwork().getNodes())
+                            {
+                                node.setNetwork(selectedNode.getNetwork());
+                            }
+                        }
+                        else return;
+                    }
                     addNodeConnection(selectedNode,snappedNode,"",1);
                     selectedNode=null;
                 }

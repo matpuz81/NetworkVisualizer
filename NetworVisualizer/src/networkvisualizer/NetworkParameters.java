@@ -127,7 +127,6 @@ public class NetworkParameters extends JFrame {
     void save() {
         
         net.setParams(nameInput.getText(), descriptionInput.getText(), "LAN", "star", 1);
-        NetworkVisualizer.panel.repaint();
         
         //if(!NetworkVisualizer.panel.getNetworks().contains(net))
         //}
