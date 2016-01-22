@@ -37,13 +37,16 @@ public class Network {
          this.id=id;       
     }
     
-    public void setParams(String name,String description, String net_type_id, String net_topology, int net_com_protocol)
+    public void setParams(String name,String description, String net_type_id, int net_com_protocol)
     {
         this.name=name;
         this.description=description;
         this.net_type_id=net_type_id;
-        this.net_topology=net_topology;
         this.net_com_protocol=net_com_protocol;
+    }
+    
+    public void setColor(Color c) {
+        this.color = c;
     }
     
     public int getId() {
@@ -67,6 +70,7 @@ public class Network {
     }
     
     public String getNet_topology() {
+        System.out.println("Attention: Network topology is no longer supported by the db");
         return net_topology;
     }
     

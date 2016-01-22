@@ -67,6 +67,7 @@ public class DBCore {
         }
     }
     
+    /*
     public ArrayList<NetworkTopology> getAllNetworkTopology() {
         try {
             Statement stmt = connection.createStatement();
@@ -83,6 +84,7 @@ public class DBCore {
             return null;
         }
     }
+    */
     
     public ArrayList<NetworkType> getAllNetworkType() {
         try {
@@ -119,6 +121,7 @@ public class DBCore {
         }
     }
     
+    /*
     public boolean addNetworkTopology(NetworkTopology netTop) {
         try {
             Statement stmt = connection.createStatement();
@@ -131,6 +134,7 @@ public class DBCore {
             return false;
         }   
     }
+    */
     
     public boolean addNetworkType(NetworkType netType) {
         try {
@@ -157,8 +161,9 @@ public class DBCore {
             ResultSet res = stmt.executeQuery(sql);
             while(res.next()) {
                 Network net = new Network();
-                net.setParams(res.getString("name"), res.getString("description"), res.getString("networktype_id_net_type"), res.getString("networktopology_name"), res.getInt("comunicationprotocol_id"));
+                net.setParams(res.getString("name"), res.getString("description"), res.getString("networktype_id_net_type"), res.getInt("comunicationprotocol_id"));
                 net.setId(res.getInt("id_network"));
+                net.setColor(SColor.getColorFromHex(res.getString("color")));
                 output.add(net);
             }
             
@@ -181,13 +186,6 @@ public class DBCore {
                 throw new Exception("Comunication protocol not found");
             }
             
-            //Cheching if networktopology exists
-            sql = "select * from networktopology where name = '"+net.getNet_topology()+"';";
-            res = stmt.executeQuery(sql);
-            if(!res.next()) {
-                throw new Exception("Networktopology not found");
-            }
-            
              //Cheching if networktype exists
             sql = "select * from networktype where id_net_type = '"+net.getNet_type_id()+"';";
             res = stmt.executeQuery(sql);
@@ -195,7 +193,7 @@ public class DBCore {
                 throw new Exception("Networktype not found");
             }
             
-            sql = "insert into network(name, description, networktype_id_net_type, networktopology_name, comunicationprotocol_id) values('"+net.getName()+"', '"+net.getDescription()+"', '"+net.getNet_type_id()+"', '"+net.getNet_topology()+"', "+net.getNet_com_protocol()+") returning id_network;";
+            sql = "insert into network(name, description, color, networktype_id_net_type, comunicationprotocol_id) values('"+net.getName()+"', '"+net.getDescription()+"', '"+SColor.hexFromColor(net.getColor())+"', '"+net.getNet_type_id()+"', "+net.getNet_com_protocol()+") returning id_network;";
             res = stmt.executeQuery(sql);
             
             res.next();
@@ -342,7 +340,7 @@ public class DBCore {
             ResultSet res = stmt.executeQuery(sql);
             if(res.next()) {
                 net = new Network();
-                net.setParams(res.getString("name"), res.getString("description"), res.getString("networktype_id_net_type"), res.getString("networktopology_name"), res.getInt("comunicationprotocol_id"));
+                net.setParams(res.getString("name"), res.getString("description"), res.getString("networktype_id_net_type"), res.getInt("comunicationprotocol_id"));
                 net.setId(res.getInt("id_network"));
                 return net;
             } else {
@@ -357,7 +355,7 @@ public class DBCore {
     public boolean updateNetwork(Network net) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "update network set name  = '"+net.getName()+"', description = '"+net.getDescription()+"', networktype_id_net_type = '"+net.getNet_type_id()+"', networktopology_name = '"+net.getNet_topology()+"', comunicationprotocol_id = "+net.getNet_com_protocol()+" where id_network = "+net.getId()+";";
+            String sql = "update network set name  = '"+net.getName()+"', description = '"+net.getDescription()+"', color = '"+SColor.hexFromColor(net.getColor())+"', networktype_id_net_type = '"+net.getNet_type_id()+"', networktopology_name = '"+net.getNet_topology()+"', comunicationprotocol_id = "+net.getNet_com_protocol()+" where id_network = "+net.getId()+";";
             stmt.executeUpdate(sql);
             stmt.close();
             return true;
@@ -413,12 +411,14 @@ public class DBCore {
                     + "  PRIMARY KEY ( protocol_id )\n"
                     + ");\n"
                     + " \n"
+                    /*
                     + "CREATE TABLE IF NOT EXISTS NetworkTopology (\n"
                     + "  name VARCHAR(15) NOT NULL,\n"
                     + "  structure VARCHAR(300) NULL,\n"
                     + "  PRIMARY KEY (name)\n"
                     + ");\n"
                     + " \n"
+                    */
                     + "CREATE TABLE IF NOT EXISTS Users (\n"
                     + "  id_user INT NOT NULL,\n"
                     + "  type VARCHAR(45) NULL,\n"
@@ -460,14 +460,12 @@ public class DBCore {
                     + "  id_network SERIAL,\n"
                     + "  Name VARCHAR(45) NULL,\n"
                     + "  Description VARCHAR(300) NULL,\n"
+                    + "  Color VARCHAR(20) NULL,\n"
                     + "  NetworkType_id_net_type VARCHAR(3) NOT NULL,\n"
-                    + "  NetworkTopology_name VARCHAR(15) NOT NULL,\n"
                     + "  ComunicationProtocol_id INT NOT NULL,\n"
                     + "  PRIMARY KEY(id_network),\n"
                     + "    FOREIGN KEY (NetworkType_id_net_type)\n"
                     + "    REFERENCES NetworkType(id_net_type),\n"
-                    + "    FOREIGN KEY (NetworkTopology_name)\n"
-                    + "    REFERENCES NetworkTopology(name),\n"
                     + "  FOREIGN KEY (ComunicationProtocol_id)\n"
                     + "  REFERENCES ComunicationProtocol(protocol_id)\n"
                     + ");\n"
@@ -544,7 +542,9 @@ public class DBCore {
                     + "DROP TABLE ConsumedBy;\n"
                     + "DROP TABLE Service;\n"
                     + "DROP TABLE Users;\n"
+                    /*
                     + "DROP TABLE NetworkTopology;\n"
+                    */
                     + "DROP TABLE ComunicationProtocol;\n"
                     + "DROP TABLE NetworkType;";
             stmt.executeUpdate(sql);
@@ -561,7 +561,7 @@ public class DBCore {
     
     private void insertExampleData() {
         addNetworkType(new NetworkType("LAN", "local"));
-        addNetworkTopology(new NetworkTopology("star", "normal"));
+        //addNetworkTopology(new NetworkTopology("star", "normal"));
         addComunicationProtocol(new ComunicationProtocol("TCP", "low", "def")); 
     }
     
