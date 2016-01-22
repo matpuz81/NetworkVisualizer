@@ -342,6 +342,7 @@ public class DBCore {
                 net = new Network();
                 net.setParams(res.getString("name"), res.getString("description"), res.getString("networktype_id_net_type"), res.getInt("comunicationprotocol_id"));
                 net.setId(res.getInt("id_network"));
+                net.setColor(SColor.getColorFromHex(res.getString("color")));
                 return net;
             } else {
                 return null;
