@@ -37,17 +37,15 @@ public class SColor {
         String hexR = decToHex(r);
         String hexG = decToHex(g);
         String hexB = decToHex(b);
+        System.out.println(hexR);
+        
         
         return hexR+hexG+hexB;
     }
     
     private static String decToHex(int dec) {
-        String hexRaw = Integer.toHexString(dec);
-        String hex = null;
-        if(hexRaw.length() == 1) {
-            hex = "0"+hexRaw;
-        }
-        return hex;
+        
+        return String.format("%02X", dec);
     }
     
     private static int hexToDec(String hex) {

@@ -70,9 +70,63 @@ public class Network {
     }
     
     public String getNet_topology() {
-        System.out.println("Attention: Network topology is no longer supported by the db");
+        
+        switch(getNetTopology())
+        {
+            case 1: return "Hybrid";
+            case 2: return "Line";
+            case 3: return "Ring";
+            case 4: return "Star";
+            case 5: return "Mesh";
+            case 6: return "Fully connected mesh";
+            case 7: return "Tree";
+        }
         return net_topology;
     }
+    
+    private int getNetTopology() {   // 1 - Hybrid , 2 - Line, 3 - Ring, 4 - Star, 5 - Mesh, 6 - Fully connected mesh, 7 - Tree
+        
+        
+        if(getNodes().size() == (getNodeLinks().size() + 1))
+        {            
+            boolean isLine=true;
+            for(Node n:getNodes())
+            {
+                if(n.getConnectedNodes().size() > 2)
+                    isLine = false;
+                
+                
+                if(n.getConnectedNodes().size() == getNodeLinks().size() && getNodeLinks().size() > 2)   // Star
+                    return 4;
+                
+                if(n.getConnectedNodes().size() == 3)
+                    return 7;
+            }
+            if(isLine) // Line
+                return 2;  
+        }
+        
+        if(getNodes().size() == getNodeLinks().size())
+        {
+            for(Node n:getNodes())
+            {
+                if(n.getConnectedNodes().size() != 2)       // Mesh
+                    return 5;
+            }
+            return 3;       // Ring
+        }
+        
+        if(getNodeLinks().size() == ((getNodes().size() -1) * getNodes().size() /2))
+            return 6;       // Fully connected mesh
+        
+        if(getNodes().size() < getNodeLinks().size())
+        {
+            return 5;
+        }
+        
+        return 1;
+    }
+    
     
     public Color getColor()
     {
@@ -87,6 +141,16 @@ public class Network {
                 nodes.add(n);
         }
         return nodes;
+    }
+    
+        public LinkedList<NodeLink> getNodeLinks()
+    {
+        LinkedList<NodeLink> nodeLink = new LinkedList();
+        for(NodeLink n:NetworkVisualizer.panel.nodeLink){
+            if(n.n1.getNetwork() == this)
+                nodeLink.add(n);
+        }
+        return nodeLink;
     }
     
     

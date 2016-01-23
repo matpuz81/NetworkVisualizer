@@ -46,7 +46,7 @@ public class NetworkParameters extends JFrame {
     LinkedList<Node> nodesToRemove = new LinkedList();
     JSlider colorSlider;
     JButton cancelButton, saveButton;
-    JLabel nameInputLabel;
+    JLabel nameInputLabel, topologyLabel;
     JTextArea descriptionInput;
     JTextField nameInput;
     

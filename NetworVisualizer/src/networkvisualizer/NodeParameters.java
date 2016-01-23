@@ -38,7 +38,6 @@ public class NodeParameters extends JFrame {
     
     JPanel mainPanel = new JPanel();
     JList nodesList;
-    JComboBox networkList = new JComboBox();
     GraphPanel parentPanel;
     Node node;
     DefaultListModel nodeListModel = new DefaultListModel();
@@ -131,10 +130,6 @@ public class NodeParameters extends JFrame {
     
     final void refreshList()
     {
-        for(Network n:NetworkVisualizer.panel.getNetworks())
-        {
-            networkList.addItem(n.getName());
-        }
         
         nodeListModel.clear();
         if(node.getConnectedNodes().isEmpty() || node.getConnectedNodes().size() == nodesToRemove.size())

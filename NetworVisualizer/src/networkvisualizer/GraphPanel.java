@@ -117,6 +117,8 @@ public class GraphPanel extends JPanel {
         {
             databaseError(0);
         }
+        
+        //System.out.println(tmpNode.getNetwork().getNetTopology());
 
     }
     
@@ -132,6 +134,7 @@ public class GraphPanel extends JPanel {
     {
         nodeLink.add(new NodeLink(n1,n2,type,velocity));
         NetworkVisualizer.DB.addNodeConnection(n1, n2);
+        System.out.println(n1.getNetwork().getNet_topology());
     }
     
     public void connectNodesById(int id1, int id2,String type, double velocity)
@@ -248,6 +251,7 @@ public class GraphPanel extends JPanel {
     public void removeConnection(Node n1, Node n2)
     {
         NodeLink l = getConnection(n1,n2);
+        NetworkVisualizer.DB.deleteNodeConnection(n1, n2);
         nodeLink.remove(l);
     }
     
@@ -309,7 +313,7 @@ public class GraphPanel extends JPanel {
                 g2.setColor(Color.green);
             else if(n==snappedNode) {
                 if(areConnected(snappedNode,selectedNode))
-                    g2.setColor(Color.gray);
+                    g2.setColor(Color.red);
                 else
                     g2.setColor(Color.blue);
             }
@@ -341,7 +345,7 @@ public class GraphPanel extends JPanel {
         mousePos = event.getPoint();
         snappedNode=null;
         
-        if(SwingUtilities.isMiddleMouseButton(event)) {
+        if(SwingUtilities.isMiddleMouseButton(event) && mouseCenterDifference != null) {
             Point p = new Point(event.getX()-mouseCenterDifference.x, event.getY()-mouseCenterDifference.y);
             centerNode.setLocation(p);
         }
@@ -435,6 +439,11 @@ public class GraphPanel extends JPanel {
             }
             else if(selectedNode != null)       //Node is selected and clicked again, which opens its parameters 
             {
+                if(snappedNode != selectedNode)
+                {
+                    return;
+                }
+                
                 NodeParameters params = new NodeParameters(selectedNode);
                 selectedNode = null;
                 params.setVisible(true);
