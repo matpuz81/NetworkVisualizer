@@ -44,7 +44,12 @@ public class DBCore {
         System.out.println("Opened database successfully");
         System.out.println(createDbStructure());
         //System.out.println(this.cleanDb());
-        //insertExampleData();
+        
+        //Insert some defoult data if not exist
+        insetDefNetworkTypes();
+        insertDefCommunicationProtocol();
+        
+        
         addNodesToPanelFromDb();
         
         
@@ -558,6 +563,57 @@ public class DBCore {
             return false;
         }
 
+    }
+    
+    private void insetDefNetworkTypes() {
+        insertNetworkType("LAN", "Local Area Network");
+        insertNetworkType("PAN", "Personal Area Network");
+        insertNetworkType("MAN", "Metropolitan Area Network");
+        insertNetworkType("WAN", "Wide Area Network");
+        insertNetworkType("GAN", "Global Area Network");
+    }
+    
+    private void insertNetworkType(String name, String desc) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from networktype where id_net_type = '"+name+"';";
+            ResultSet res = stmt.executeQuery(sql);
+            if(!res.next()) {
+                sql = "insert into networktype(id_net_type, description) values('"+name+"', '"+desc+"');";
+                stmt.executeUpdate(sql);
+                
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+       
+    }
+    
+    private void insertDefCommunicationProtocol() {
+        insertCommunicationProtocol("TCP", "low", "Transmission Control Protoco");
+        insertCommunicationProtocol("UDP", "low", "User Datagram Protocol");
+        insertCommunicationProtocol("ICMP", "low", "Internet Control Message Protocol");
+        insertCommunicationProtocol("HTTP", "high", "Hypertext Transfer Protocol");
+        insertCommunicationProtocol("DNS", "high", "Domain Name System");
+        insertCommunicationProtocol("SMTP", "high", "Simple Mail Transfer Protocol");
+        
+    }
+    
+    private void insertCommunicationProtocol(String name, String level, String desc) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from comunicationprotocol where name = '"+name+"';";
+            ResultSet res = stmt.executeQuery(sql);
+            if(!res.next()) {
+                sql = "insert into comunicationprotocol(name, level, description) values('"+name+"', '"+level+"', '"+desc+"');";
+                stmt.executeUpdate(sql);
+                
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     private void insertExampleData() {
