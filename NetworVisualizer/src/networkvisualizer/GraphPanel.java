@@ -75,18 +75,11 @@ public class GraphPanel extends JPanel {
         addMouseWheelListener( new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
-                if(e.getWheelRotation() <0 && zoom>minZoom)
-                {
-                    zoom -= zoom/10;
-                }
-                else if(e.getWheelRotation() > 0 && zoom<maxZoom)
-                {
-                    zoom += zoom/10;
-                }
-                /*
+                
                 if((zoom > minZoom && e.getUnitsToScroll() < 0) || (zoom < maxZoom && e.getUnitsToScroll() > 0)) {
                     zoom+=zoom/(((double)e.getUnitsToScroll()))/4;
-                }*/
+                    repaint();
+                }
             }
         });
 
