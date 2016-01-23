@@ -5,6 +5,7 @@
  */
 package networkvisualizer;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import javax.swing.JLabel;
@@ -22,15 +23,11 @@ public class NetworkVisualizerPanel extends JPanel{
     
     public NetworkVisualizerPanel()
     {
-        label = new JLabel();
-        label.setText("ad");
-       
-        field = new JTextField("", 10);
-        
+        Toolbar toolbar = new Toolbar();
+        this.setLayout(new BorderLayout());
         this.setBackground(Color.WHITE);
-        //this.add(label);
-        //this.add(field);
-        this.add(NetworkVisualizer.panel);
+        this.add(toolbar,BorderLayout.NORTH);
+        this.add(NetworkVisualizer.panel,BorderLayout.CENTER);
         
     }
     

@@ -75,14 +75,29 @@ public class GraphPanel extends JPanel {
         addMouseWheelListener( new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
+                if(e.getWheelRotation() <0 && zoom>minZoom)
+                {
+                    zoom -= zoom/10;
+                }
+                else if(e.getWheelRotation() > 0 && zoom<maxZoom)
+                {
+                    zoom += zoom/10;
+                }
+                /*
                 if((zoom > minZoom && e.getUnitsToScroll() < 0) || (zoom < maxZoom && e.getUnitsToScroll() > 0)) {
                     zoom+=zoom/(((double)e.getUnitsToScroll()))/4;
-                }
+                }*/
             }
         });
 
         centerNode = new Point(getSize().width/2,getSize().height/2);
         
+    }
+    
+    public void setZoom(double newzoom)
+    {
+        if(newzoom < 10 && newzoom > 0.2)
+            this.zoom=newzoom;
     }
     
     public Point getCenterNode() {

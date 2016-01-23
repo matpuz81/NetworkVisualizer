@@ -5,8 +5,12 @@
  */
 package networkvisualizer;
 
+import com.bric.swing.ColorPicker;
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -37,16 +41,17 @@ public class NetworkParameters extends JFrame {
     JPanel mainPanel = new JPanel();
     JList nodesList;
     GraphPanel parentPanel;
-    Network net;
+    final Network net;
     DefaultListModel lm = new DefaultListModel();
     JPanel listPanel = new JPanel();
     JPanel southPanel = new JPanel();
     JPanel centerPanel = new JPanel();
     JPanel leftPanel = new JPanel();
+    JPanel parameterPanel = new JPanel();
     LinkedList<Node> nodesToRemove = new LinkedList();
     JSlider colorSlider;
-    JButton cancelButton, saveButton;
-    JLabel nameInputLabel, topologyLabel;
+    JButton cancelButton, saveButton, colorButton;
+    JLabel nameInputLabel, colorLabel, topologyLabel;
     JTextArea descriptionInput;
     JTextField nameInput;
     
@@ -57,14 +62,68 @@ public class NetworkParameters extends JFrame {
         this.setTitle("Parameters - " + net.getName() + " - id:" + net.getId());
         
         mainPanel.setLayout(new BorderLayout());
-        leftPanel.setLayout(new BoxLayout(leftPanel,BoxLayout.Y_AXIS));
+        leftPanel.setLayout(new GridLayout(2,1));
+        parameterPanel.setLayout(new GridLayout(3,2,10,0));
+        parameterPanel.setPreferredSize(new Dimension(500,100));
         
         nameInputLabel = new JLabel("Label:");
+        colorLabel = new JLabel("Color:");
         nameInput = new JTextField(20);
         nameInput.setText(net.getName());
-        
+        topologyLabel = new JLabel(net.getNet_topology());
+        colorButton = new JButton();
+        colorButton.setPreferredSize(new Dimension(25,25));
+        colorButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        colorButton.setBackground(net.getColor());
+        colorButton.setActionCommand("openColorPopup");
+        colorButton.addActionListener(new NetworkParametersListener());
+
         descriptionInput = new JTextArea(5,20);
+        descriptionInput.setText(net.getDescription());
         
+        addList();
+        
+        cancelButton = new JButton("Cancel");
+        cancelButton.setActionCommand("cancel");
+        cancelButton.addActionListener(new NetworkParametersListener());
+        saveButton = new JButton("Save");
+        saveButton.setActionCommand("save");
+        saveButton.addActionListener(new NetworkParametersListener());
+        
+        southPanel.add(cancelButton);
+        southPanel.add(saveButton);
+        
+        parameterPanel.add(nameInputLabel);
+        JPanel colorTopologyLabelPanel = new JPanel();
+        colorTopologyLabelPanel.setLayout(new GridLayout(1,2));
+        colorTopologyLabelPanel.add(colorLabel);
+        colorTopologyLabelPanel.add(new JLabel("Topology:"));
+        parameterPanel.add(colorTopologyLabelPanel);
+        parameterPanel.add(nameInput);
+        JPanel colorTopologyPanel = new JPanel();
+        colorTopologyPanel.setLayout(new GridLayout(1,2));
+        JPanel colorButtonPanel = new JPanel();
+        colorButtonPanel.setBackground(Color.red);
+        colorButtonPanel.add(colorButton);
+        colorTopologyPanel.add(colorButtonPanel);
+        colorTopologyPanel.add(topologyLabel);
+        parameterPanel.add(colorTopologyPanel);
+        leftPanel.add(parameterPanel);
+        leftPanel.add(descriptionInput);
+        centerPanel.add(leftPanel);
+        centerPanel.add(listPanel);
+        
+        mainPanel.add(centerPanel,BorderLayout.CENTER);
+        mainPanel.add(southPanel,BorderLayout.SOUTH);
+        getContentPane().add(mainPanel);
+        
+        getRootPane().setDefaultButton(saveButton);
+        pack();
+        setVisible(true);
+    }
+    
+    final void addList()
+    {
         listPanel.setBorder(BorderFactory.createTitledBorder("Connected Nodes:"));
 
         nodesList = new JList(lm);
@@ -80,30 +139,6 @@ public class NetworkParameters extends JFrame {
         listPanel.add(nodesList);
         
         refreshList();
-        
-        cancelButton = new JButton("Cancel");
-        cancelButton.setActionCommand("cancel");
-        cancelButton.addActionListener(new NodeParametersListener());
-        saveButton = new JButton("Save");
-        saveButton.setActionCommand("save");
-        saveButton.addActionListener(new NodeParametersListener());
-        southPanel.add(cancelButton);
-        southPanel.add(saveButton);
-        
-        leftPanel.add(nameInputLabel);
-        leftPanel.add(nameInput);
-        leftPanel.add(descriptionInput);
-        
-        centerPanel.add(leftPanel);
-        centerPanel.add(listPanel);
-        
-        mainPanel.add(centerPanel,BorderLayout.CENTER);
-        mainPanel.add(southPanel,BorderLayout.SOUTH);
-        getContentPane().add(mainPanel);
-        
-        getRootPane().setDefaultButton(saveButton);
-        pack();
-        setVisible(true);
     }
     
     final void refreshList()
@@ -127,22 +162,10 @@ public class NetworkParameters extends JFrame {
     void save() {
         
         net.setParams(nameInput.getText(), descriptionInput.getText(), "LAN", 1);
+        net.setColor(colorButton.getBackground());
         
-        //if(!NetworkVisualizer.panel.getNetworks().contains(net))
-        //}
-        //net.setParams(labelInput.getText());
-        /*
-        if(!parentPanel.nodes.contains(node))
-        {
-            parentPanel.createNodeFinally(node);
-        }
+        NetworkVisualizer.DB.updateNetwork(net);
         
-        
-        for(Node n:nodesToRemove) {
-            System.out.println(n.getLabel());
-            n.nodes.remove(node);
-            node.nodes.remove(n);
-        }*/
         
         parentPanel.repaint();
         close();
@@ -162,44 +185,40 @@ public class NetworkParameters extends JFrame {
         if(SwingUtilities.isRightMouseButton(e))
         { 
             if(nodesList.getSelectedIndex() != -1 && nodesList.isEnabled()) {
-                NodeParametersMenu paramMenu = new NodeParametersMenu();
+                NetworkParametersMenu paramMenu = new NetworkParametersMenu();
                 paramMenu.show(nodesList,e.getX(),e.getY());
             }
         }
     }
     
-    class NodeParametersMenu extends JPopupMenu
+    class NetworkParametersMenu extends JPopupMenu
     {
-        JMenuItem disconnectNode,nodeProperties;
+        JMenuItem nodeProperties;
 
-        public NodeParametersMenu(){
-            disconnectNode = new JMenuItem("Disconnect");
-            disconnectNode.setActionCommand("disconnectNode");
+        public NetworkParametersMenu(){
             nodeProperties = new JMenuItem("Properties");
             nodeProperties.setActionCommand("nodeProperties");
 
-            disconnectNode.addActionListener(new NodeParametersListener());
-            nodeProperties.addActionListener(new NodeParametersListener());
+            nodeProperties.addActionListener(new NetworkParametersListener());
             
-            add(disconnectNode);
             add(nodeProperties);
         }
     }
     
-    class NodeParametersListener implements ActionListener
+    class NetworkParametersListener implements ActionListener
     {
         
         @Override
         public void actionPerformed(ActionEvent e) {
             switch(e.getActionCommand())
             {
-                case "disconnectNode": 
-                    nodesToRemove.add(getSelectedNode());
-                    refreshList();
+                case "openColorPopup":
+                    colorButton.setBackground(ColorPicker.showDialog(null, colorButton.getBackground()));
                     break;
+                    
                 case "nodeProperties":
-                    //NetworkParameters paramsFrame = new NetworkParameters(getSelectedNode());
-                    //paramsFrame.setVisible(true);
+                    NodeParameters paramsFrame = new NodeParameters(getSelectedNode());
+                    paramsFrame.setVisible(true);
                     close();
                     break;
                 case "save":
