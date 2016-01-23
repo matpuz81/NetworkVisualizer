@@ -361,7 +361,7 @@ public class DBCore {
     public boolean updateNetwork(Network net) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "update network set name  = '"+net.getName()+"', description = '"+net.getDescription()+"', color = '"+SColor.hexFromColor(net.getColor())+"', networktype_id_net_type = '"+net.getNet_type_id()+"', networktopology_name = '"+net.getNet_topology()+"', comunicationprotocol_id = "+net.getNet_com_protocol()+" where id_network = "+net.getId()+";";
+            String sql = "update network set name  = '"+net.getName()+"', description = '"+net.getDescription()+"', color = '"+SColor.hexFromColor(net.getColor())+"', networktype_id_net_type = '"+net.getNet_type_id()+"', comunicationprotocol_id = "+net.getNet_com_protocol()+" where id_network = "+net.getId()+";";
             stmt.executeUpdate(sql);
             stmt.close();
             return true;
