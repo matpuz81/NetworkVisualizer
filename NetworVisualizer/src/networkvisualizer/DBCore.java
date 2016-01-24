@@ -43,6 +43,7 @@ public class DBCore {
         }
         System.out.println("Opened database successfully");
         System.out.println(createDbStructure());
+        System.out.println("!!!!!!!!!!!!!!!!DB should be resetet!!!!!!!!!!");
         //System.out.println(this.cleanDb());
         
         //Insert some defoult data if not exist
@@ -370,6 +371,25 @@ public class DBCore {
             return false;
         }
     }
+   
+    
+    public boolean deleteNetwork(Network net) throws Exception {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from node where network_id_network = "+net.getId()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if(res.next()) {
+                throw new Exception("A node is stil linked to this Network");
+            }
+            
+            sql = "delete from network where id_network = "+net.getId()+";";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch(SQLException ex) {
+            return false;
+        }
+    }
     
     public boolean addNodesToPanelFromDb() {
         try {
@@ -397,6 +417,103 @@ public class DBCore {
             return false;
         }
     }
+    
+    public int addUser(User us) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "insert into users(username, type, usage) values('"+us.getUsername()+"', '"+us.isIsAdmin()+"', "+us.getUsage()+") returning id_user ;";
+            ResultSet res = stmt.executeQuery(sql);
+            res.next(); //By calling one time next the first tuple became selected
+            int id = res.getInt(1); //The number passing the get method represents the collum.
+            stmt.close();
+            us.setUserID(id);
+            return id;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+    }
+    
+    public boolean updateUser(User us) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "update users set username = '"+us.getUsername()+"', type = '"+us.isIsAdmin()+"', usage = "+us.getUsage()+" where id_user = "+us.getUserID()+";";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+    public boolean deleteUser(User us) throws Exception {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from consumedby where user_id_user = "+us.getUserID()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if(res.next()) {
+                throw new Exception("User is stil linked in the consumed by table");
+            }
+            
+            sql = "delete from users where id_user = "+us.getUserID()+";";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+    public User getUserById(int id) {
+        try {
+            Statement stmt = connection.createStatement();
+            User us = null;
+            String sql = "select * from users where id_user = "+id+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if(res.next()) {
+                us = new User(res.getInt("id_user"), res.getString("username"), res.getBoolean("type"));
+                us.setUsage(res.getInt("usage"));
+            }
+            
+            stmt.close();
+            
+            return us;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        
+    }
+    
+    public ArrayList<User> getAllUser() {
+        try {
+            
+            ArrayList<User> output = new ArrayList<User>();
+            
+            Statement stmt = connection.createStatement();
+            
+            String sql = "select * from users";
+            ResultSet res = stmt.executeQuery(sql);
+            while(res.next()) {
+                User us = new User(res.getInt("id_user"), res.getString("username"), res.getBoolean("type"));
+                us.setUsage(res.getInt("usage"));
+                
+                output.add(us);
+            }
+            
+            stmt.close();
+            
+            return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        
+    }
+    
+    
     
     public boolean addOffer(Network net, Service ser) throws Exception {
         try {
@@ -492,9 +609,10 @@ public class DBCore {
                     + " \n"
                     */
                     + "CREATE TABLE IF NOT EXISTS Users (\n"
-                    + "  id_user INT NOT NULL,\n"
-                    + "  type VARCHAR(45) NULL,\n"
-                    + "  usage VARCHAR(45) NULL,\n"
+                    + "  id_user SERIAL NOT NULL,\n"
+                    + "  username VARCHAR(45) NOT NULL,\n"
+                    + "  type BOOLEAN NULL,\n"
+                    + "  usage INT NULL,\n"
                     + "  PRIMARY KEY (id_user)\n"
                     + ");\n"
                     + " \n"

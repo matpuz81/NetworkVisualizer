@@ -28,6 +28,10 @@ public class User {
     public int getUserID() {
         return userID;
     }
+    
+    public void setUsage(int us) {
+        this.usage = us;
+    }
 
     public void setUserID(int userID) {
         this.userID = userID;
