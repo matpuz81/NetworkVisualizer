@@ -41,7 +41,7 @@ public class CommunicationProtocolList extends JDialog {
         JScrollPane scrollpane = new JScrollPane(table);
         panel.add(scrollpane);
         
-        newProtocol = new JButton("New Protocol");
+        newProtocol = new JButton("New");
         newProtocol.setPreferredSize(new Dimension(100,25));
         newProtocol.addActionListener(listener);
         panel.add(newProtocol);

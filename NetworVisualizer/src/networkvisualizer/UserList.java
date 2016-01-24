@@ -41,7 +41,7 @@ public class UserList extends JDialog {
         JScrollPane scrollpane = new JScrollPane(table);
         panel.add(scrollpane);
         
-        newUser = new JButton("New User");
+        newUser = new JButton("New");
         newUser.setPreferredSize(new Dimension(100,25));
         newUser.addActionListener(listener);
         panel.add(newUser);
@@ -51,7 +51,7 @@ public class UserList extends JDialog {
         modifyUser.addActionListener(listener);
         panel.add(modifyUser);
         
-        deleteUser = new JButton("Delete User");
+        deleteUser = new JButton("Delete");
         deleteUser.setPreferredSize(new Dimension(100,25));
         deleteUser.addActionListener(listener);
         panel.add(deleteUser);

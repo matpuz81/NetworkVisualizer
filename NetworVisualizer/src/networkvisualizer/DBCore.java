@@ -24,8 +24,8 @@ public class DBCore {
     private final String us = "postgres";
     private final String pw = "password";
     private final String dbName = "testDB";
-    private final String dbPort = "5432";//1111
-    private final String dbIp = "127.0.0.1";//localhost
+    private final String dbPort = "1111";//5432 1111
+    private final String dbIp = "localhost";//127.0.0.1 localhost
     
     //Temp variable to enable debugging
     
@@ -562,7 +562,7 @@ public class DBCore {
     private void insertExampleData() {
         addNetworkType(new NetworkType("LAN", "local"));
         addNetworkTopology(new NetworkTopology("star", "normal"));
-        addComunicationProtocol(new CommunicationProtocol("TCP", "low", "def")); 
+        addComunicationProtocol(new CommunicationProtocol("TCP", 1, "def")); 
     }
     
     private int getSmaller(int a, int b) {

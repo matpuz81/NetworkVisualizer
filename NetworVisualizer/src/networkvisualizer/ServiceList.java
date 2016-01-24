@@ -41,7 +41,7 @@ public class ServiceList extends JDialog {
         JScrollPane scrollpane = new JScrollPane(table);
         panel.add(scrollpane);
         
-        newService = new JButton("New User");
+        newService = new JButton("New");
         newService.setPreferredSize(new Dimension(100,25));
         newService.addActionListener(listener);
         panel.add(newService);
