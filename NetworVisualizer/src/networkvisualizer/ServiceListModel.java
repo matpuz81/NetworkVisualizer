@@ -12,24 +12,22 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Jessica
  */
-public class UserListModel extends AbstractTableModel {
+public class ServiceListModel extends AbstractTableModel {
 
-    private final String[] columnNames = {"ID",
-                        "Username",
-                        "Type",
-                        "Service Usage"};
+    private final String[] columnNames = {"COD",
+                        "Service",
+                        "Description",
+                        "Permission", "Cost"};
     
-    private ArrayList<User> userList = new ArrayList<User>();
+    private ArrayList<Service> serviceList = new ArrayList<Service>();
     
-    public UserListModel() {
-        User user = new User(123, "jmondini", true);
-        userList.add(user);
-        updateUserList();
+    public ServiceListModel() {
+        updateServiceList();
     }
     
     @Override
     public int getRowCount() {
-        return userList.size();
+        return serviceList.size();
     }
 
     @Override
@@ -39,19 +37,18 @@ public class UserListModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        User user = this.userList.get(rowIndex);
+        Service service = this.serviceList.get(rowIndex);
         switch(columnIndex) {
             case 0:
-                return user.getUserID();
+                return service.getCOD();
             case 1:
-                return user.getUsername();
+                return service.getService();
             case 2:
-                if(user.isIsAdmin())
-                    return "Admin";
-                else
-                    return "Normal";
+                return service.getDescription();
             case 3:
-                return user.getUsage();
+                return service.getPermission();
+            case 4:
+                return service.getCost();
             default:
                 return "";
         }
@@ -67,7 +64,7 @@ public class UserListModel extends AbstractTableModel {
         return false;
     }
     
-    public void updateUserList() {
-        // Update userlist from DB
+    public void updateServiceList() {
+        // Update servicelist from DB
     }
 }

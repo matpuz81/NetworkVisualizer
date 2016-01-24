@@ -12,24 +12,20 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Jessica
  */
-public class UserListModel extends AbstractTableModel {
+public class NetworkTypeListModel extends AbstractTableModel {
 
     private final String[] columnNames = {"ID",
-                        "Username",
-                        "Type",
-                        "Service Usage"};
+                        "Description"};
     
-    private ArrayList<User> userList = new ArrayList<User>();
+    private ArrayList<NetworkType> networkTypeList = new ArrayList<NetworkType>();
     
-    public UserListModel() {
-        User user = new User(123, "jmondini", true);
-        userList.add(user);
-        updateUserList();
+    public NetworkTypeListModel() {
+        updateNetworkTypeList();
     }
     
     @Override
     public int getRowCount() {
-        return userList.size();
+        return networkTypeList.size();
     }
 
     @Override
@@ -39,19 +35,12 @@ public class UserListModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        User user = this.userList.get(rowIndex);
+        NetworkType type = this.networkTypeList.get(rowIndex);
         switch(columnIndex) {
             case 0:
-                return user.getUserID();
+                return type.getId();
             case 1:
-                return user.getUsername();
-            case 2:
-                if(user.isIsAdmin())
-                    return "Admin";
-                else
-                    return "Normal";
-            case 3:
-                return user.getUsage();
+                return type.getDescription();
             default:
                 return "";
         }
@@ -67,7 +56,7 @@ public class UserListModel extends AbstractTableModel {
         return false;
     }
     
-    public void updateUserList() {
+    public void updateNetworkTypeList() {
         // Update userlist from DB
     }
 }

@@ -25,6 +25,7 @@ public class CreateModifyUser extends JDialog {
     private ChoserFieldPanel type;
     private JButton done;
     private User user;
+    private static final String[] VALUES = {"Normal", "Admin"};
     
     public CreateModifyUser(User user) {
         this.user = user;
@@ -49,7 +50,7 @@ public class CreateModifyUser extends JDialog {
         }
         panel.add(username);
         
-        type = new ChoserFieldPanel("Type:");
+        type = new ChoserFieldPanel("Type:", VALUES);
         if(user != null) {
             if(user.isIsAdmin()) {
                 type.setFieldChoser(1);

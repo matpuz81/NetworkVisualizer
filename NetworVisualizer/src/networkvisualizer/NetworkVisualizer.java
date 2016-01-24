@@ -56,18 +56,43 @@ public class NetworkVisualizer {
         
         networkMenu = new JMenu("Network");
         topologiesItem = new JMenuItem("Topologies");
-        //topolotgiesItem.addActionListener(this);
+        topologiesItem.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                TopologyList topology = new TopologyList();
+            }
+            
+        });
         networkMenu.add(topologiesItem);
         networkTypeItem = new JMenuItem("Network Types");
-        //networkTypeItem.addActionListener(this);
+        networkTypeItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                NetworkTypeList networkType = new NetworkTypeList();
+            }
+        });
         networkMenu.add(networkTypeItem);
         communicationProtocolItem = new JMenuItem("Communication Protocols");
-        //communicationProtocolItem.addActionListener(this);
+        communicationProtocolItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                CommunicationProtocolList communicationProtocol = new CommunicationProtocolList();
+            }
+        });
         networkMenu.add(communicationProtocolItem);
         
         serviceMenu = new JMenu("Service");
         servicesItem = new JMenuItem("Services");
-        //servicesItem.addActionListener(this);
+        servicesItem.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ServiceList service = new ServiceList();
+            }
+        });
         serviceMenu.add(servicesItem);
         
         menuBar.add(userMenu);

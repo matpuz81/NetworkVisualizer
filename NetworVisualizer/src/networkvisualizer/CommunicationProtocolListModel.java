@@ -12,24 +12,22 @@ import javax.swing.table.AbstractTableModel;
  *
  * @author Jessica
  */
-public class UserListModel extends AbstractTableModel {
+public class CommunicationProtocolListModel extends AbstractTableModel {
 
     private final String[] columnNames = {"ID",
-                        "Username",
-                        "Type",
-                        "Service Usage"};
+                        "Name",
+                        "Description",
+                        "Level"};
     
-    private ArrayList<User> userList = new ArrayList<User>();
+    private ArrayList<CommunicationProtocol> protocolList = new ArrayList<CommunicationProtocol>();
     
-    public UserListModel() {
-        User user = new User(123, "jmondini", true);
-        userList.add(user);
-        updateUserList();
+    public CommunicationProtocolListModel() {
+        updateProtocolList();
     }
     
     @Override
     public int getRowCount() {
-        return userList.size();
+        return protocolList.size();
     }
 
     @Override
@@ -39,19 +37,16 @@ public class UserListModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        User user = this.userList.get(rowIndex);
+        CommunicationProtocol protocol = this.protocolList.get(rowIndex);
         switch(columnIndex) {
             case 0:
-                return user.getUserID();
+                return protocol.getId();
             case 1:
-                return user.getUsername();
+                return protocol.getName();
             case 2:
-                if(user.isIsAdmin())
-                    return "Admin";
-                else
-                    return "Normal";
+                return protocol.getDescription();
             case 3:
-                return user.getUsage();
+                return protocol.getLevel();
             default:
                 return "";
         }
@@ -67,7 +62,7 @@ public class UserListModel extends AbstractTableModel {
         return false;
     }
     
-    public void updateUserList() {
-        // Update userlist from DB
+    public void updateProtocolList() {
+        // Update servicelist from DB
     }
 }

@@ -50,14 +50,14 @@ public class DBCore {
         
     }
     
-    public ArrayList<ComunicationProtocol> getAllComunicationProtocol() {
+    public ArrayList<CommunicationProtocol> getAllComunicationProtocol() {
         try {
             Statement stmt = connection.createStatement();
             String sql = "select * from comunicationprotocol;";
             ResultSet res = stmt.executeQuery(sql);
-            ArrayList<ComunicationProtocol> output = new ArrayList<ComunicationProtocol>();
+            ArrayList<CommunicationProtocol> output = new ArrayList<CommunicationProtocol>();
             while(res.next())  {
-                output.add(new ComunicationProtocol(res.getInt("protocol_id"), res.getString("name"), res.getString("level"), res.getString("description")));
+                output.add(new CommunicationProtocol(res.getInt("protocol_id"), res.getString("name"), res.getInt("level"), res.getString("description")));
             }
             stmt.close();
             return output;
@@ -103,7 +103,7 @@ public class DBCore {
     
     
     
-    public int addComunicationProtocol(ComunicationProtocol comProt) {
+    public int addComunicationProtocol(CommunicationProtocol comProt) {
         try {
             Statement stmt = connection.createStatement();
             String sql = "insert into comunicationprotocol(name, level, description) values('"+comProt.getName()+"', '"+comProt.getLevel()+"', '"+comProt.getDescription()+"') returning protocol_id;";
@@ -408,7 +408,7 @@ public class DBCore {
                     + "CREATE TABLE IF NOT EXISTS ComunicationProtocol  (\n"
                     + "   protocol_id SERIAL,\n"
                     + "   name  VARCHAR(10) NULL,\n"
-                    + "   level  VARCHAR(45) NULL,\n"
+                    + "   level INT NOT NULL,\n"
                     + "   description  VARCHAR(300) NULL,\n"
                     + "  PRIMARY KEY ( protocol_id )\n"
                     + ");\n"
@@ -562,7 +562,7 @@ public class DBCore {
     private void insertExampleData() {
         addNetworkType(new NetworkType("LAN", "local"));
         addNetworkTopology(new NetworkTopology("star", "normal"));
-        addComunicationProtocol(new ComunicationProtocol("TCP", "low", "def")); 
+        addComunicationProtocol(new CommunicationProtocol("TCP", "low", "def")); 
     }
     
     private int getSmaller(int a, int b) {

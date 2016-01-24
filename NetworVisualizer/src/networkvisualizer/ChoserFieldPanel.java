@@ -25,10 +25,11 @@ public class ChoserFieldPanel extends JPanel {
     
     private JLabel label;
     private JComboBox field;
-    private String[] values = {"Normal", "Admin"};
+    private String[] values;
     
-    public ChoserFieldPanel(String textLabel){
+    public ChoserFieldPanel(String textLabel, String[] values){
         
+        this.values = values;
         this.setPreferredSize(new Dimension (300, 100));
         
         Color orange_light_color = new Color(253, 189, 99);
@@ -49,6 +50,14 @@ public class ChoserFieldPanel extends JPanel {
     
     public int getFieldChoser(){
         return field.getSelectedIndex();
+    }
+    
+    public void setFieldChoser(String value) {
+        field.setSelectedItem(value);
+    }
+    
+    public String getFieldChoserString(){
+        return String.valueOf(field.getSelectedItem());
     }
     
     public void resetFieldChoser() {

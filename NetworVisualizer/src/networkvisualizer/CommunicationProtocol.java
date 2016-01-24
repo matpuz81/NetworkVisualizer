@@ -9,24 +9,22 @@ package networkvisualizer;
  *
  * @author matthiaskeim
  */
-public class ComunicationProtocol {
+public class CommunicationProtocol {
     
     private int protocol_id;
     private String name;
-    private String level;
+    private int level;
     private String description;
     
-    public ComunicationProtocol(String name, String level, String desc) {
+    public CommunicationProtocol(String name, int level, String desc) {
         this.name = name;
         this.level = level;
         this.description = desc;
     }
     
-    public ComunicationProtocol(int id, String name, String level, String desc) {
+    public CommunicationProtocol(int id, String name, int level, String desc) {
+        this(name, level, desc);
         this.protocol_id = id;
-        this.name = name;
-        this.level = level;
-        this.description = desc;
     }
     
     public void setId(int id) {
@@ -36,17 +34,28 @@ public class ComunicationProtocol {
     public int getId() {
         return this.protocol_id;
     }
-    
+
     public String getName() {
-        return this.name;
+        return name;
     }
-    
-    public String getLevel() {
-        return this.level;
+
+    public void setName(String name) {
+        this.name = name;
     }
-    
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
     public String getDescription() {
-        return this.description;
+        return description;
     }
-    
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

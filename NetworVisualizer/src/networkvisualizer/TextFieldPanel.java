@@ -23,11 +23,9 @@ import javax.swing.SwingConstants;
 public class TextFieldPanel extends JPanel{
     
     private JLabel label_name, label_value;
-    private int value;
+    private String name = "", value = "";
     
-    public TextFieldPanel(String name, int value){
-        this.value = value;
-        
+    private TextFieldPanel(){
         this.setPreferredSize(new Dimension (300, 100));
         
         Color orange_light_color = new Color(253, 189, 99);
@@ -37,19 +35,41 @@ public class TextFieldPanel extends JPanel{
         label_name.setPreferredSize(new Dimension(100, 25));
         this.add(label_name);
         
-        label_value = new JLabel(String.valueOf(value), SwingConstants.RIGHT);
+        label_value = new JLabel(value, SwingConstants.RIGHT);
         label_value.setPreferredSize(new Dimension(150, 25));
         this.add(label_value);
     }
     
-    public int getValue(){
+    public TextFieldPanel(String name, int value){
+        this();
+        this.name = name;
+        this.value = String.valueOf(value);
+        updateDialog();
+    }
+    
+    public TextFieldPanel(String name, String value){
+        this();
+        this.name = name;
+        this.value = value;
+        updateDialog();
+    }
+    
+    private void updateDialog(){
+        label_name.setText(name);
+        label_value.setText(value);
+    }
+    
+    public String getValue() {
         return value;
     }
     
     public void setValue(int value) {
-        this.value = value;
-        label_value.setText(String.valueOf(value));
+        this.value = String.valueOf(value);
+        updateDialog();
     }
     
-
+    public void setValue(String value) {
+        this.value = value;
+        updateDialog();
+    }
 }

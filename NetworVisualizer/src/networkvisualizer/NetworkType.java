@@ -26,5 +26,12 @@ public class NetworkType {
     public String getDescription() {
         return this.description;
     }    
-    
+
+    public void setId_net_type(String id_net_type) {
+        this.id_net_type = id_net_type;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

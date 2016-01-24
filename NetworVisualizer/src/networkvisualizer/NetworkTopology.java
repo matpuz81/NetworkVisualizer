@@ -26,4 +26,12 @@ public class NetworkTopology {
     public String getStructure() {
         return this.structure;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStructure(String structure) {
+        this.structure = structure;
+    }
 }
