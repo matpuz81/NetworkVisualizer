@@ -24,8 +24,8 @@ public class DBCore {
     private final String us = "postgres";
     private final String pw = "password";
     private final String dbName = "testDB";
-    private final String dbPort = "5432";
-    private final String dbIp = "127.0.0.1";
+    private final String dbPort = "5432";//1111
+    private final String dbIp = "127.0.0.1";//localhost
     
     //Temp variable to enable debugging
     
