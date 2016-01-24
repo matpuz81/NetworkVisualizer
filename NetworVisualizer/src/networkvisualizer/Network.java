@@ -5,6 +5,7 @@
 package networkvisualizer;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -143,14 +144,30 @@ public class Network {
         return nodes;
     }
     
-        public LinkedList<NodeLink> getNodeLinks()
+        public LinkedList<NodeConnection> getNodeLinks()
     {
-        LinkedList<NodeLink> nodeLink = new LinkedList();
-        for(NodeLink n:NetworkVisualizer.panel.nodeLink){
+        LinkedList<NodeConnection> nodeLink = new LinkedList();
+        for(NodeConnection n:NetworkVisualizer.panel.nodeConnection){
             if(n.n1.getNetwork() == this)
                 nodeLink.add(n);
         }
         return nodeLink;
+    }
+        
+    public Point getMiddle()
+    {
+        Point p=new Point(0,0);
+        int cnt=0;
+        for(Node n:getNodes())
+        {
+            Point np = NetworkVisualizer.panel.getNodePosition(n);
+            p.x += np.x;
+            p.y += np.y;
+            cnt++;
+        }
+        p.x/=cnt;
+        p.y/=cnt;
+        return p;
     }
     
     

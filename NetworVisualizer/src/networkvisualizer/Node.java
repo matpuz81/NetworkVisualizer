@@ -18,22 +18,15 @@ public class Node {
     
     private int id;
     private Network network;
-    private Point p;
-    private double angle,distance;
+    private Polar pol;
     private String label;
     private final int size;
-    private boolean doFollowMouse=false;
     
-    public Node(double angle, double distance, int size, String label)
+    public Node(Polar pol, int size, String label)
     {
-        p=new Point();
         this.size=size;
-        this.angle=angle;
-        this.distance=distance;
+        this.pol=pol;
         this.label=label;
-        
-        p.x = (int)(Math.sin(Math.toRadians(angle))*distance);
-        p.y = (int)(Math.cos(Math.toRadians(angle))*distance);
     }
     
     public void setId(int id)
@@ -49,6 +42,9 @@ public class Node {
     public void setNetwork(Network net)
     {
         this.network=net;
+        if(NetworkVisualizer.DB != null)
+            NetworkVisualizer.DB.updateNode(this);
+        
     }
     
     public void setParams(String label)
@@ -57,26 +53,10 @@ public class Node {
         NetworkVisualizer.DB.updateNode(this);
     }
     
-    public void setPolar(double angle, double distance)
+    public void setPolar(Polar pol)
     {
-        this.angle=angle;
-        this.distance=distance;
+        this.pol=pol;
         NetworkVisualizer.DB.updateNode(this);
-        
-        
-        p.x = (int)(Math.sin(Math.toRadians(angle))*distance);
-        p.y = (int)(Math.cos(Math.toRadians(angle))*distance);
-    }
-    
-    public void followMouse(MouseEvent e)
-    {
-        doFollowMouse = true;
-        p=e.getPoint();
-    }
-    
-    public void stopFollowMouse()
-    {
-        doFollowMouse=false;
     }
     
     public int getId()
@@ -90,11 +70,8 @@ public class Node {
     }
     
     public Point getPosition(Point centerNode, double zoom)
-    {        
-        if(doFollowMouse) {
-            return p;
-        }
-        return new Point((int)(centerNode.x + p.x/zoom), (int)(centerNode.y + p.y / zoom));
+    {    
+        return pol.getPoint(centerNode,zoom);
     }  
     
     public String getLabel() {
@@ -106,14 +83,15 @@ public class Node {
     }
     
     public double getAngle() {
-        return this.angle;
+        return this.pol.getAngle();
     }
     
     public double getDistance() {
-        return this.distance;
+        return this.pol.getDistance();
     }
     
     public int getNetworkId() {
         return this.network.getId();
     }
+    
 }
