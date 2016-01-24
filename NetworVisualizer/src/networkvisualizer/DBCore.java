@@ -397,6 +397,72 @@ public class DBCore {
             return false;
         }
     }
+    
+    public boolean addOffer(Network net, Service ser) throws Exception {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from service where code=" + ser.getCode() + ";";
+            ResultSet res = stmt.executeQuery(sql);
+            if (!res.next()) {
+                throw new Exception("Service not found");
+            }
+
+            sql = "select * from network where id_network = " + net.getId() + ";";
+            res = stmt.executeQuery(sql);
+            if (!res.next()) {
+                throw new Exception("Network not found");
+            }
+
+            sql = "insert into offers(network_id_network, service_code) values(" + net.getId() + "," + ser.getCode() + ")";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+    
+    public int addService(Service serv) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "insert into service(description, service, permission, cost) values('"+serv.getDescription()+"', '"+serv.getService()+"', '"+serv.getPermission()+"', "+serv.getCost()+") returning code;";
+            ResultSet res = stmt.executeQuery(sql);
+            res.next(); //By calling one time next the first tuple became selected
+            int id = res.getInt(1); //The number passing the get method represents the collum.
+            stmt.close();
+            serv.setCode(id);
+            return id;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
+        }
+    }
+    
+    public ArrayList<Service> getAllService() {
+        try {
+            
+            ArrayList<Service> output = new ArrayList<Service>();
+            
+            Statement stmt = connection.createStatement();
+            
+            String sql = "select * from service;";
+            ResultSet res = stmt.executeQuery(sql);
+            while(res.next()) {
+                Service ser = new Service(res.getString("description"), res.getString("service"), res.getString("permission"), res.getFloat("cost"));
+                ser.setCode(res.getInt("code"));
+                output.add(ser);
+            }
+            
+            stmt.close();
+            
+            return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
 
     //This method creates the tables which are neccessary for our application
     private boolean createDbStructure() {
@@ -433,7 +499,7 @@ public class DBCore {
                     + ");\n"
                     + " \n"
                     + "CREATE TABLE IF NOT EXISTS Service (\n"
-                    + "  code INT NOT NULL,\n"
+                    + "  code SERIAL,\n"
                     + "  description VARCHAR(300) NULL,\n"
                     + "  service VARCHAR(45) NULL,\n"
                     + "  permission VARCHAR(45) NULL,\n"
