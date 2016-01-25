@@ -29,22 +29,28 @@ class MenuListener implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getActionCommand()) {
+            case "moveNetwork":
+                parent.selectedNodes.clear();
+                for(Node n:node.getNetwork().getNodes())
+                {
+                    parent.selectedNodes.add(n);
+                }
             case "moveNode":
-                parent.movingNode=node;
+                parent.mouseStartPolar = Polar.getPolar(parent.getCenter(), mouse.getPoint(),parent.zoom);
+                parent.moveSelected=true;
                 break;
             case "addNode":
                 parent.createNode(null,mouse.getPoint());
                 break;
             case "deleteNode":
+                parent.selectedNodes.clear();
                 int i= JOptionPane.showConfirmDialog(null,"Delete Node " + node.getLabel() + "?",
                         "Are you sure?",JOptionPane.YES_NO_OPTION);
                 if(i==0)
                     parent.deleteNode(node);
                 break;
-            case "addNetwork":
-                parent.createNetwork();
-                break;
             case "nodeProperties":
+                parent.selectedNodes.clear();
                 NodeParameters paramsFrame = new NodeParameters(node);
                 paramsFrame.setVisible(true);
                 break;

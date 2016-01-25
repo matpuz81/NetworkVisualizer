@@ -5,12 +5,15 @@
  */
 package networkvisualizer;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 
 /**
  *
@@ -21,6 +24,8 @@ public class NetworkVisualizer {
     public static final GraphPanel panel = new GraphPanel();
     //This is the global DB Object. Every ineracction with the db should be done over this object.
     public static final DBCore DB = new DBCore();
+    
+    public static final Toolbar toolbar = new Toolbar();
 
     /**
      * @param args the command line arguments
@@ -28,9 +33,13 @@ public class NetworkVisualizer {
     public static void main(String[] args) {
         JFrame frame = new JFrame();
         frame.setJMenuBar(buildMenu());
-        NetworkVisualizerPanel networkPanel = new NetworkVisualizerPanel();
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+        mainPanel.setBackground(Color.WHITE);
+        mainPanel.add(toolbar,BorderLayout.NORTH);
+        mainPanel.add(panel);
         frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE); 
-        frame.getContentPane().add(networkPanel); 
+        frame.getContentPane().add(mainPanel); 
         frame.pack();
         frame.setVisible(true);
     }
