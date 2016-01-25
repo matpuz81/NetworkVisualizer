@@ -65,16 +65,6 @@ public class NetworkVisualizer {
         userMenu.add(userItem);
         
         networkMenu = new JMenu("Network");
-        topologiesItem = new JMenuItem("Topologies");
-        topologiesItem.addActionListener(new ActionListener(){
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                TopologyList topology = new TopologyList();
-            }
-            
-        });
-        networkMenu.add(topologiesItem);
         networkTypeItem = new JMenuItem("Network Types");
         networkTypeItem.addActionListener(new ActionListener() {
 
