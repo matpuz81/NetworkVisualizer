@@ -26,6 +26,7 @@ public class NetworkVisualizer {
     public static final DBCore DB = new DBCore();
     
     public static final Toolbar toolbar = new Toolbar();
+    
 
     /**
      * @param args the command line arguments

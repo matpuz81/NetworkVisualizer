@@ -24,6 +24,8 @@ class NodeMenu extends JPopupMenu {
         this.event=event;
         this.node = node;
         
+        
+        
         if(NetworkVisualizer.panel.selectedNodes.size() == 1)
         {
             moveNode = new JMenuItem("Move");
