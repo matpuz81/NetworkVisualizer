@@ -14,6 +14,7 @@ public class User {
     private String username;
     private boolean isAdmin;
     private int userID, usage;
+    private int pwHash;
     
     public User() {
         
@@ -23,6 +24,14 @@ public class User {
         this.userID = userID;
         this.username = username;
         this.isAdmin = isAdmin;
+    }
+    
+    public void setPwHash(int pw) {
+        this.pwHash = pw;
+    }
+    
+    public int getPwHash() {
+        return this.pwHash;
     }
 
     public int getUserID() {

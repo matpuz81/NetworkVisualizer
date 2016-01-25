@@ -475,10 +475,11 @@ public class DBCore {
         }
     }
     
-    public int addUser(User us) {
+    public int addUser(User us, String pw) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "insert into users(username, type, usage) values('"+us.getUsername()+"', '"+us.isIsAdmin()+"', "+us.getUsage()+") returning id_user ;";
+            us.setPwHash(pw.hashCode());
+            String sql = "insert into users(username, type, usage, pwhash) values('"+us.getUsername()+"', '"+us.isIsAdmin()+"', "+us.getUsage()+", "+us.getPwHash()+") returning id_user ;";
             ResultSet res = stmt.executeQuery(sql);
             res.next(); //By calling one time next the first tuple became selected
             int id = res.getInt(1); //The number passing the get method represents the collum.
@@ -491,10 +492,11 @@ public class DBCore {
         }
     }
     
-    public boolean updateUser(User us) {
+    public boolean updateUser(User us, String pw) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "update users set username = '"+us.getUsername()+"', type = '"+us.isIsAdmin()+"', usage = "+us.getUsage()+" where id_user = "+us.getUserID()+";";
+            us.setPwHash(pw.hashCode());
+            String sql = "update users set username = '"+us.getUsername()+"', type = '"+us.isIsAdmin()+"', usage = "+us.getUsage()+", pwhash = "+us.getPwHash()+" where id_user = "+us.getUserID()+";";
             stmt.executeUpdate(sql);
             stmt.close();
             return true;
@@ -532,6 +534,7 @@ public class DBCore {
             if(res.next()) {
                 us = new User(res.getInt("id_user"), res.getString("username"), res.getBoolean("type"));
                 us.setUsage(res.getInt("usage"));
+                us.setPwHash(res.getInt("pwhash"));
             }
             
             stmt.close();
@@ -556,6 +559,7 @@ public class DBCore {
             while(res.next()) {
                 User us = new User(res.getInt("id_user"), res.getString("username"), res.getBoolean("type"));
                 us.setUsage(res.getInt("usage"));
+                us.setPwHash(res.getInt("pwhash"));
                 
                 output.add(us);
             }
@@ -563,6 +567,28 @@ public class DBCore {
             stmt.close();
             
             return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        
+    }
+    
+    public User checkUser(String usn, String pw) {
+        try {
+            Statement stmt = connection.createStatement();
+            User us = null;
+            String sql = "select * from users where username = '"+usn+"' and pwhash = "+pw.hashCode()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if(res.next()) {
+                us = new User(res.getInt("id_user"), res.getString("username"), res.getBoolean("type"));
+                us.setUsage(res.getInt("usage"));
+                us.setPwHash(res.getInt("pwhash"));
+            }
+            
+            stmt.close();
+            
+            return us;
         } catch (SQLException ex) {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -828,6 +854,7 @@ public class DBCore {
                     + "  username VARCHAR(45) NOT NULL,\n"
                     + "  type BOOLEAN NULL,\n"
                     + "  usage INT NULL,\n"
+                    + "  pwhash INT NOT NULL,\n"
                     + "  PRIMARY KEY (id_user)\n"
                     + ");\n"
                     + " \n"
@@ -990,22 +1017,22 @@ public class DBCore {
     }
     
     private void insertDefCommunicationProtocol() {
-        insertCommunicationProtocol("TCP", "low", "Transmission Control Protoco");
-        insertCommunicationProtocol("UDP", "low", "User Datagram Protocol");
-        insertCommunicationProtocol("ICMP", "low", "Internet Control Message Protocol");
-        insertCommunicationProtocol("HTTP", "high", "Hypertext Transfer Protocol");
-        insertCommunicationProtocol("DNS", "high", "Domain Name System");
-        insertCommunicationProtocol("SMTP", "high", "Simple Mail Transfer Protocol");
+        insertCommunicationProtocol("TCP", 1, "Transmission Control Protoco");
+        insertCommunicationProtocol("UDP", 1, "User Datagram Protocol");
+        insertCommunicationProtocol("ICMP", 1, "Internet Control Message Protocol");
+        insertCommunicationProtocol("HTTP", 1, "Hypertext Transfer Protocol");
+        insertCommunicationProtocol("DNS", 1, "Domain Name System");
+        insertCommunicationProtocol("SMTP", 1, "Simple Mail Transfer Protocol");
         
     }
     
-    private void insertCommunicationProtocol(String name, String level, String desc) {
+    private void insertCommunicationProtocol(String name, int level, String desc) {
         try {
             Statement stmt = connection.createStatement();
             String sql = "select * from comunicationprotocol where name = '"+name+"';";
             ResultSet res = stmt.executeQuery(sql);
             if(!res.next()) {
-                sql = "insert into comunicationprotocol(name, level, description) values('"+name+"', '"+level+"', '"+desc+"');";
+                sql = "insert into comunicationprotocol(name, level, description) values('"+name+"', "+level+", '"+desc+"');";
                 stmt.executeUpdate(sql);
                 
             }
