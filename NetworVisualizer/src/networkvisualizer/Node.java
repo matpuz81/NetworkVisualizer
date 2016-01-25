@@ -21,6 +21,7 @@ public class Node {
     private Polar pol;
     private String label;
     private final int size;
+    private String status;
     
     public Node(Polar pol, int size, String label)
     {
@@ -92,6 +93,14 @@ public class Node {
     
     public int getNetworkId() {
         return this.network.getId();
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
     
 }

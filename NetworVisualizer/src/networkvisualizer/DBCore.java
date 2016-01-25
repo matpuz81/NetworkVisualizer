@@ -44,7 +44,7 @@ public class DBCore {
         System.out.println("Opened database successfully");
         System.out.println(createDbStructure());
         System.out.println("!!!!!!!!!!!!!!!!DB should be resetet!!!!!!!!!!");
-        //System.out.println(this.cleanDb());
+        System.out.println(this.cleanDb());
         
         //Insert some defoult data if not exist
         insetDefNetworkTypes();
@@ -362,9 +362,9 @@ public class DBCore {
     public boolean updateNode(Node n) {
         try {
             Statement stmt = connection.createStatement();
-            String sql = "update node set ip_address = '"+n.getLabel()+"' where id_node = "+n.getId()+";"
-                    + "update node set angle = "+n.getAngle()+" where id_node = "+n.getId()+";"
-                    + "update node set distance = "+n.getDistance()+" where id_node = "+n.getId()+";";
+            String sql = "update node set ip_address = '"+n.getLabel()
+                    + "', angle="+n.getAngle()+", distance="+n.getDistance()+
+                    ", network_id_network="+n.getNetwork().getId() + ", status='"+n.getStatus()+"' where id_node = "+n.getId()+";";
             stmt.executeUpdate(sql);
             stmt.close();
             return true;

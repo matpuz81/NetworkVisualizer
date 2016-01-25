@@ -498,10 +498,20 @@ public class GraphPanel extends JPanel {
                         "Merge the networks?",JOptionPane.YES_NO_OPTION);
                         if(n==0)
                         {
-                            for(Node node:snappedNode.getNetwork().getNodes())
+                            Network net = snappedNode.getNetwork();
+                            for(Node node:net.getNodes())
                             {
-                                Network net = node.getNetwork();
+                                System.out.println(node.getNetwork().getId());
                                 node.setNetwork(selectedNodes.getFirst().getNetwork());
+                                System.out.println(node.getNetwork().getId());
+                                NetworkVisualizer.DB.updateNode(node);
+                            }
+                            try {
+                                boolean a = NetworkVisualizer.DB.deleteNetwork(net);
+                                
+                                System.out.println(a);
+                            } catch (Exception ex) {
+                                System.out.println(ex.getMessage());
                             }
                         }
                         else return;
