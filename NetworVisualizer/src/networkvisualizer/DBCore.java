@@ -44,7 +44,7 @@ public class DBCore {
         System.out.println("Opened database successfully");
         System.out.println(createDbStructure());
         System.out.println("!!!!!!!!!!!!!!!!DB should be resetet!!!!!!!!!!");
-        System.out.println(this.cleanDb());
+        //System.out.println(this.cleanDb());
         
         //Insert some defoult data if not exist
         insetDefNetworkTypes();
