@@ -17,7 +17,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -103,7 +102,6 @@ public class NetworkParameters extends JFrame {
         JPanel colorTopologyPanel = new JPanel();
         colorTopologyPanel.setLayout(new GridLayout(1,2));
         JPanel colorButtonPanel = new JPanel();
-        colorButtonPanel.setBackground(Color.red);
         colorButtonPanel.add(colorButton);
         colorTopologyPanel.add(colorButtonPanel);
         colorTopologyPanel.add(topologyLabel);
