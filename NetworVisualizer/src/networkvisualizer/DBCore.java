@@ -56,23 +56,6 @@ public class DBCore {
         
     }
     
-    public ArrayList<ComunicationProtocol> getAllComunicationProtocol() {
-        try {
-            Statement stmt = connection.createStatement();
-            String sql = "select * from comunicationprotocol;";
-            ResultSet res = stmt.executeQuery(sql);
-            ArrayList<ComunicationProtocol> output = new ArrayList<ComunicationProtocol>();
-            while(res.next())  {
-                output.add(new ComunicationProtocol(res.getInt("protocol_id"), res.getString("name"), res.getString("level"), res.getString("description")));
-            }
-            stmt.close();
-            return output;
-        } catch (SQLException ex) {
-            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
-    
     /*
     public ArrayList<NetworkTopology> getAllNetworkTopology() {
         try {
@@ -109,9 +92,43 @@ public class DBCore {
         }
     }
     
+    public boolean addNetworkType(NetworkType netType) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "insert into networktype(id_net_type, description) values('"+netType.getId()+"', '"+netType.getDescription()+"');";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+       
+    }
+    
+   
+    public boolean deleteNetworkType(NetworkType nt) throws Exception {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = " select * from network where networktype_id_net_type = '"+nt.getId()+"';";
+            ResultSet res = stmt.executeQuery(sql);
+            if(res.next()) {
+                throw new Exception("This networktype is still linkt to a network");
+            }
+            
+            sql = "delete from networktype where id_net_type = '"+nt.getId()+"';";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+    }
     
     
-    public int addComunicationProtocol(ComunicationProtocol comProt) {
+    public int addCommunicationProtocol(ComunicationProtocol comProt) {
         try {
             Statement stmt = connection.createStatement();
             String sql = "insert into comunicationprotocol(name, level, description) values('"+comProt.getName()+"', '"+comProt.getLevel()+"', '"+comProt.getDescription()+"') returning protocol_id;";
@@ -125,6 +142,43 @@ public class DBCore {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
         }
+    }
+    
+    public boolean deleteCommunicationProtocol(ComunicationProtocol cp) throws Exception {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from network where comunicationprotocol_id = '"+cp.getId()+"';";
+            ResultSet res = stmt.executeQuery(sql);
+            if(res.next()) {
+                throw new Exception("This communication protocol is still linkt to a network");
+            }
+            
+            sql = "delete from comunicationprotocol where protocol_id = '"+cp.getId()+"';";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+    public ArrayList<ComunicationProtocol> getAllComunicationProtocol() {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from comunicationprotocol;";
+            ResultSet res = stmt.executeQuery(sql);
+            ArrayList<ComunicationProtocol> output = new ArrayList<ComunicationProtocol>();
+            while(res.next())  {
+                output.add(new ComunicationProtocol(res.getInt("protocol_id"), res.getString("name"), res.getString("level"), res.getString("description")));
+            }
+            stmt.close();
+            return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+        
     }
     
     /*
@@ -142,19 +196,7 @@ public class DBCore {
     }
     */
     
-    public boolean addNetworkType(NetworkType netType) {
-        try {
-            Statement stmt = connection.createStatement();
-            String sql = "insert into networktype(id_net_type, description) values('"+netType.getId()+"', '"+netType.getDescription()+"');";
-            stmt.executeUpdate(sql);
-            stmt.close();
-            return true;
-        } catch (SQLException ex) {
-            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-       
-    }
+    
     
     public ArrayList<Network> getAllNetwork() {
         try {
@@ -213,6 +255,24 @@ public class DBCore {
         } catch (SQLException ex) {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
+        }
+    }
+    
+    public boolean deleteNetwork(Network net) throws Exception {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from node where network_id_network = "+net.getId()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if(res.next()) {
+                throw new Exception("A node is stil linked to this Network");
+            }
+            
+            sql = "delete from network where id_network = "+net.getId()+";";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch(SQLException ex) {
+            return false;
         }
     }
     
@@ -371,25 +431,6 @@ public class DBCore {
             return false;
         }
     }
-   
-    
-    public boolean deleteNetwork(Network net) throws Exception {
-        try {
-            Statement stmt = connection.createStatement();
-            String sql = "select * from node where network_id_network = "+net.getId()+";";
-            ResultSet res = stmt.executeQuery(sql);
-            if(res.next()) {
-                throw new Exception("A node is stil linked to this Network");
-            }
-            
-            sql = "delete from network where id_network = "+net.getId()+";";
-            stmt.executeUpdate(sql);
-            stmt.close();
-            return true;
-        } catch(SQLException ex) {
-            return false;
-        }
-    }
     
     public boolean addNodesToPanelFromDb() {
         try {
@@ -538,6 +579,164 @@ public class DBCore {
         } catch(SQLException ex) {
             ex.printStackTrace();
             return false;
+        }
+    }
+    
+    public boolean deleteOffer(Network net, Service ser) throws Exception {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from offers where network_id_network = "+net.getId()+" and service_code = "+ser.getCode()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if (!res.next()) {
+                throw new Exception("offer not found");
+            }
+
+            sql = "delete from offers where network_id_network = "+net.getId()+" and service_code = "+ser.getCode()+";";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+    
+    public ArrayList<Network> getAllNetworkOfferingService(Service ser) {
+        try {
+            
+            ArrayList<Network> output = new ArrayList<Network>();
+            
+            Statement stmt = connection.createStatement();
+            
+            String sql = "select n.name, n.description, n.networktype_id_net_type, n.comunicationprotocol_id, n.id_network from offers o, service s, network n where o.network_id_network = n.id_network and o.service_code = s.code and s.code = "+ser.getCode()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            while(res.next()) {
+                Network net = new Network();
+                net.setParams(res.getString("name"), res.getString("description"), res.getString("networktype_id_net_type"), res.getInt("comunicationprotocol_id"));
+                net.setId(res.getInt("id_network"));
+                output.add(net);
+            }
+            
+            stmt.close();
+            
+            return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public ArrayList<Service> getAllServiceOfferdByNetwork(Network net) {
+        try {
+            
+            ArrayList<Service> output = new ArrayList<Service>();
+            
+            Statement stmt = connection.createStatement();
+            
+            String sql = "select s.code, s.description, s.service, s.permission, s.cost from offers o, service s, network n where o.network_id_network = n.id_network and o.service_code = s.code and n.id_network = "+net.getId()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            while(res.next()) {
+                Service ser = new Service(res.getString("description"), res.getString("service"), res.getString("permission"), res.getFloat("cost"));
+                ser.setCode(res.getInt("code"));
+                output.add(ser);
+            }
+            
+            stmt.close();
+            
+            return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public boolean addConsumedBy(User us, Service ser) throws Exception {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from users where id_user = "+us.getUserID()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if (!res.next()) {
+                throw new Exception("user not found");
+            }
+            
+            sql = "select * from service where code = "+ser.getCode()+";";
+            res = stmt.executeQuery(sql);
+            if (!res.next()) {
+                throw new Exception("service not found");
+            }
+
+            sql = "insert into consumedby(service_code, user_id_user) values("+ser.getCode()+","+us.getUserID()+");";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean deletConsumedBy(User us, Service ser) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "delete from consumedby where service_code = "+ser.getCode()+" and user_id_user = "+us.getUserID()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            
+            stmt.close();
+            return true;
+
+        } catch(SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+    
+    public ArrayList<User> getAllUserConsumingService(Service ser) {
+        try {
+            
+            ArrayList<User> output = new ArrayList<User>();
+            
+            Statement stmt = connection.createStatement();
+            
+            String sql = "select u.id_user, u.username, u.type, u.usage from users u, service s, consumedby c where c.service_code = s.code and c.user_id_user = u.id_user and s.code = "+ser.getCode()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            while(res.next()) {
+                User us = new User(res.getInt("id_user"), res.getString("username"), res.getBoolean("type"));
+                us.setUsage(res.getInt("usage"));
+                output.add(us);
+            }
+            
+            stmt.close();
+            
+            return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
+    }
+    
+    public ArrayList<Service> getAllServiceConsumedByUser(User us) {
+        try {
+            
+            ArrayList<Service> output = new ArrayList<Service>();
+            
+            Statement stmt = connection.createStatement();
+            
+            String sql = "select s.code, s.description, s.service, s.permission, s.cost from users u, service s, consumedby c where c.service_code = s.code and c.user_id_user = u.id_user and u.id_user = "+us.getUserID()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            while(res.next()) {
+                Service ser = new Service(res.getString("description"), res.getString("service"), res.getString("permission"), res.getFloat("cost"));
+                ser.setCode(res.getInt("code"));
+                output.add(ser);
+            }
+            
+            stmt.close();
+            
+            return output;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
     }
     
@@ -803,7 +1002,7 @@ public class DBCore {
     private void insertExampleData() {
         addNetworkType(new NetworkType("LAN", "local"));
         //addNetworkTopology(new NetworkTopology("star", "normal"));
-        addComunicationProtocol(new ComunicationProtocol("TCP", "low", "def")); 
+        addCommunicationProtocol(new ComunicationProtocol("TCP", "low", "def")); 
     }
     
     private int getSmaller(int a, int b) {
