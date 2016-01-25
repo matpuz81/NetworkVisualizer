@@ -49,7 +49,7 @@ public class GraphPanel extends JPanel {
     Rectangle selection=null;
     
     String noNodeMessage ="Right click -> 'Add Node' to add Nodes";
-    double zoom=1.00, maxZoom=10.0, minZoom=0.2;
+    double goalZoom=1.00, maxZoom=10.0, minZoom=0.2, zoom=1.00;
     
     public GraphPanel()
     {
@@ -84,15 +84,13 @@ public class GraphPanel extends JPanel {
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 
-                if((zoom > minZoom && e.getUnitsToScroll() < 0) || (zoom < maxZoom && e.getUnitsToScroll() > 0)) {
+                if((goalZoom > minZoom && e.getUnitsToScroll() < 0) || (goalZoom < maxZoom && e.getUnitsToScroll() > 0)) {
                     if(e.getWheelRotation() > 0)
-                        zoom+= zoom/(zoom*10);
+                        goalZoom+= goalZoom/(goalZoom*10);
                     else 
-                        zoom -= zoom/(zoom*10);
-                    System.out.println(e.getWheelRotation());
+                        goalZoom -= goalZoom/(goalZoom*10);
                     repaint();
-                    NetworkVisualizer.toolbar.zoomSlider.setValue((int)(zoom*10));
-                    //NetworkVisualizer.toolbar.zoomSlider.repaint();
+                    NetworkVisualizer.toolbar.zoomSlider.setValue((int)(goalZoom*10));
                 }
             }
         });
@@ -104,7 +102,8 @@ public class GraphPanel extends JPanel {
     public void setZoom(double newzoom)
     {
         if(newzoom < maxZoom && newzoom > minZoom)
-            this.zoom=newzoom;
+            this.goalZoom=newzoom;
+        repaint();
     }
     
     public Point getCenter() {
@@ -165,6 +164,18 @@ public class GraphPanel extends JPanel {
     
     public void deleteNode(Node n)
     {
+        Network net = n.getNetwork();
+        if(net.getNodes().size() == 1)
+        {
+            int x = JOptionPane.showConfirmDialog(this,
+            "Attention!\n" + n.getLabel() + " is the Last node of " + net.getName() + 
+            "\nBy deleting this Node, " + net.getName() + " will be deleted too.\nDo you want to proceed?",
+            "Delete network?",JOptionPane.YES_NO_OPTION);
+            if(x==1)
+                return;
+        }
+        
+        
         LinkedList<NodeConnection> toRemove = new LinkedList();
         for(NodeConnection l:nodeConnection)
         {
@@ -175,11 +186,18 @@ public class GraphPanel extends JPanel {
             }
         }
         
-        NetworkVisualizer.DB.deleteNode(n);
-                
 
         nodeConnection.removeAll(toRemove);
         nodes.remove(n);
+        
+        try {
+            NetworkVisualizer.DB.deleteNode(n);
+            if(net.getNodes().isEmpty()) {
+                NetworkVisualizer.DB.deleteNetwork(net);
+            }
+        } catch (Exception ex) {
+        }
+                
     }
     
     public Node getNodeById(int id)
@@ -315,6 +333,14 @@ public class GraphPanel extends JPanel {
     public void paint(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
         
+        if(zoom < goalZoom)
+            zoom += (goalZoom-zoom)/70;
+        if(zoom > goalZoom)
+            zoom -= (zoom-goalZoom)/70;
+        
+        if(Math.abs(zoom - goalZoom) < 0.01)
+            zoom = goalZoom;
+        
         if(!showNodes())     
             g2.setColor(Color.lightGray);
         g2.clearRect(0,0,this.getSize().width,this.getSize().height);
@@ -371,8 +397,15 @@ public class GraphPanel extends JPanel {
             g2.setStroke(new BasicStroke(1.0f,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER,10.0f, dash1, 0.0f));
             g2.draw(selection);
         }
-        g2.drawRect(10,10,10,10);
-        g2.drawString("Zoom: " + zoom, 5, getSize().height-20);
+        
+            g2.drawString("Zoom: " + Math.round(100/zoom) + "%", 5, getSize().height-20);
+        
+        if(zoom != goalZoom)
+        {
+            
+            repaint();
+        }
+        
     }
     
     public void checkForDragging(MouseEvent event) {
