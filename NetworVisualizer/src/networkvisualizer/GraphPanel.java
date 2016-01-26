@@ -13,6 +13,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -21,6 +23,7 @@ import java.awt.event.MouseWheelListener;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 /**
@@ -41,7 +44,7 @@ public class GraphPanel extends JPanel {
     
     LinkedList<Node> selectedNodes = new LinkedList();
     Node snappedNode=null;
-    Polar mouseStartPolar, currentMousePolar;
+    Polar mouseStartPolar;
     
     boolean moveSelected=false;
     Point anchor;
@@ -49,7 +52,9 @@ public class GraphPanel extends JPanel {
     Rectangle selection=null;
     
     String noNodeMessage ="Right click -> 'Add Node' to add Nodes";
-    double goalZoom=1.00, maxZoom=10.0, minZoom=0.2, zoom=1.00;
+    private double goalZoom=1.00, zoom=1.00;
+    public final double maxZoom=10.0, minZoom=0.2, networkViewZoom=5.0;
+    
     
     public GraphPanel()
     {
@@ -94,9 +99,15 @@ public class GraphPanel extends JPanel {
                 }
             }
         });
+        
 
         centerPoint = new Point(getSize().width/2,getSize().height/2);
         
+    }
+    
+    public double getZoom()
+    {
+        return zoom;
     }
     
     public void setZoom(double newzoom)
@@ -127,11 +138,10 @@ public class GraphPanel extends JPanel {
             tmpNode.setId(id);
             nodes.add(tmpNode);
             if(connectedNode != null) {
-                addNodeConnection(tmpNode,connectedNode,"",1);
+                addNodeConnection(tmpNode,connectedNode,"Wired",1);
             }
         }
-        else
-        {
+        else {
             databaseError(0);
         }
         
@@ -156,8 +166,7 @@ public class GraphPanel extends JPanel {
     public void connectNodesById(int id1, int id2,String type, double velocity)
     {
         Node n1=getNodeById(id1), n2=getNodeById(id2);
-        if(n1 != null && n2 != null)
-        {
+        if(n1 != null && n2 != null) {
             nodeConnection.add(new NodeConnection(n1,n2,type,velocity));
         }
     }
@@ -174,7 +183,6 @@ public class GraphPanel extends JPanel {
             if(x==1)
                 return;
         }
-        
         
         LinkedList<NodeConnection> toRemove = new LinkedList();
         for(NodeConnection l:nodeConnection)
@@ -202,8 +210,7 @@ public class GraphPanel extends JPanel {
     
     public Node getNodeById(int id)
     {
-        for(Node n:nodes)
-        {
+        for(Node n:nodes) {
             if(n.getId() == id)
                 return n;
         }
@@ -216,10 +223,8 @@ public class GraphPanel extends JPanel {
         try {
             net = new Network();
             int id = NetworkVisualizer.DB.addNetwork(net);
-            if(id!=-1)
-            {
+            if(id!=-1){
                 net.setId(id);
-                //networks.add(net);
             }
         } catch (Exception ex) {
             Logger.getLogger(GraphPanel.class.getName()).log(Level.SEVERE, null, ex);
@@ -292,7 +297,7 @@ public class GraphPanel extends JPanel {
     
     public int getNodeSize()
     {
-        return (int)(this.getWidth()/40 /zoom);
+        return (int)(20 /zoom);
     }
     
     private void databaseError(int error_id)
@@ -302,7 +307,7 @@ public class GraphPanel extends JPanel {
     
     private boolean showNodes()
     {
-        return zoom<5;
+        return zoom<networkViewZoom;
     }
     
     public Point getNodePosition(Node n)
@@ -398,11 +403,10 @@ public class GraphPanel extends JPanel {
             g2.draw(selection);
         }
         
-            g2.drawString("Zoom: " + Math.round(100/zoom) + "%", 5, getSize().height-20);
+            g2.drawString("Zoom: " + Math.round(100/goalZoom) + "%", 15, getSize().height-20);
         
         if(zoom != goalZoom)
         {
-            
             repaint();
         }
         
@@ -474,24 +478,13 @@ public class GraphPanel extends JPanel {
                 selectedNodes.clear();
             }
             else {     //If the right mouse button is clicked on a node, the context menu opens
-                if(selectedNodes.size()<=1)
-                {
-                    if(selectedNodes.size()==0)
-                        selectedNodes.add(n);
 
-                    NodeMenu menu = new NodeMenu(event,selectedNodes.getFirst());
-                    menu.show(this, getNodePosition(selectedNodes.getFirst()).x, getNodePosition(selectedNodes.getFirst()).y);
-
-                }
                 
-                else if (!selectedNodes.isEmpty())
-                {
-                    selectedNodes.remove(n);
-                    selectedNodes.addFirst(n);
-                    NodeMenu menu = new NodeMenu(event,selectedNodes.getFirst());
-                    menu.show(this, getNodePosition(selectedNodes.getFirst()).x, getNodePosition(selectedNodes.getFirst()).y);
-
-                }
+                if(selectedNodes.isEmpty())     // If no element is selected
+                    selectedNodes.addFirst(n);      // add the clicked element as first element
+                
+                NodeMenu menu = new NodeMenu(event,selectedNodes.getFirst());
+                menu.show(this, event.getPoint().x, event.getPoint().y);
                 
                 
             }

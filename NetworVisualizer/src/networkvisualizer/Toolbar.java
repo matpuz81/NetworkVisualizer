@@ -24,7 +24,6 @@ public class Toolbar extends JPanel{
     JSlider zoomSlider;
     JButton zoomToNetView = new JButton("View Networks");
     JButton zoomToNodeView = new JButton("View Nodes");
-    JLabel zoomLabel = new JLabel("100%");
     public Toolbar (){
         
         
@@ -32,7 +31,7 @@ public class Toolbar extends JPanel{
         zoomToNetView.addActionListener(new ToolbarListener());
         zoomToNodeView.setActionCommand("zoomToNodeView");
         zoomToNodeView.addActionListener(new ToolbarListener());
-        zoomSlider = new JSlider(2,100,10);
+        zoomSlider = new JSlider((int)(NetworkVisualizer.panel.minZoom*10),(int)(NetworkVisualizer.panel.maxZoom*10),10);
         zoomSlider.setInverted(true);
         zoomSlider.addChangeListener(new ChangeListener() {
             @Override
@@ -41,18 +40,15 @@ public class Toolbar extends JPanel{
                 NetworkVisualizer.panel.repaint();
             }
         });
+        
+        
         add(zoomToNetView);
         add(zoomToNodeView);
         add(new JLabel("-"));
         add(zoomSlider);
         add(new JLabel("+"));
-        add(zoomLabel);
     }
     
-    public void updateZoomLabel(int percent)
-    {
-        zoomLabel.setText("Zoom: " + percent + "%");
-    }
     
     
     public class ToolbarListener implements ActionListener {

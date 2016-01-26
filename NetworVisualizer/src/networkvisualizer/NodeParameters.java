@@ -6,6 +6,7 @@
 package networkvisualizer;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -21,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
@@ -191,18 +193,26 @@ public class NodeParameters extends JFrame {
     
     class NodeParametersMenu extends JPopupMenu
     {
-        JMenuItem disconnectNode,nodeProperties;
+        JMenuItem disconnectNode,nodeProperties,setVelocity, setType;
 
         public NodeParametersMenu(){
             disconnectNode = new JMenuItem("Disconnect");
             disconnectNode.setActionCommand("disconnectNode");
+            setVelocity = new JMenuItem("Set connection velocity");
+            setVelocity.setActionCommand("setVelocity");
+            setType = new JMenuItem("Set connection type");
+            setType.setActionCommand("setType");
             nodeProperties = new JMenuItem("Properties");
             nodeProperties.setActionCommand("nodeProperties");
 
             disconnectNode.addActionListener(new NodeParametersListener());
+            setVelocity.addActionListener(new NodeParametersListener());
+            setType.addActionListener(new NodeParametersListener());
             nodeProperties.addActionListener(new NodeParametersListener());
             
             add(disconnectNode);
+            add(setVelocity);
+            add(setType);
             add(nodeProperties);
         }
     }
@@ -214,16 +224,51 @@ public class NodeParameters extends JFrame {
         public void actionPerformed(ActionEvent e) {
             switch(e.getActionCommand())
             {
-                case "addNetwork":
-                    
-                    Network tmpNet = new Network();
-                    node.setNetwork(tmpNet);
-                    NetworkParameters addNetworkFrame = new NetworkParameters(tmpNet);
-                    addNetworkFrame.setVisible(true);
-                    save();
+                case "setVelocity":
+                    double result=0;
+                    boolean inputOk = false;
+                    JLabel velocityInputLabel = new JLabel("Input a value: (must be double format)");
+                    while(!inputOk)
+                    {
+                        String s = (String)JOptionPane.showInputDialog(velocityInputLabel);
+                        if(s==null)
+                            break;  
+                        
+                        if (s.length() > 0) {
+                            
+                            inputOk = true;
+                            try{
+                                result = Double.valueOf(s);
+                                NetworkVisualizer.panel.getConnection(node, getSelectedNode()).setVelocity(result);
+                                NetworkVisualizer.DB.updateNodeConnection(NetworkVisualizer.panel.getConnection(node, getSelectedNode()));
+                                refreshList();
+                            }
+                            catch(NumberFormatException ex)
+                            {
+                                velocityInputLabel.setForeground(Color.red);
+                                inputOk = false;
+                            }
+                        }
+                    }
                     break;
-                case "changeNetwork":
-                    
+                case "setType":
+                    Object[] possibilities = {"Wired", "Wireless"};
+                    String s = (String)JOptionPane.showInputDialog(
+                                        null,
+                                        "Select connection type",
+                                        "Connection Type",
+                                        JOptionPane.PLAIN_MESSAGE,
+                                        null,
+                                        possibilities,
+                                        NetworkVisualizer.panel.getConnection(node, getSelectedNode()).getType());
+                    if(s==null)
+                        break;
+                    //If a string was returned, say so.
+                    if (s.length() > 0 &&!s.equals(NetworkVisualizer.panel.getConnection(node, getSelectedNode()).getType())) {
+                        NetworkVisualizer.panel.getConnection(node, getSelectedNode()).setType(s);
+                        NetworkVisualizer.DB.updateNodeConnection(NetworkVisualizer.panel.getConnection(node, getSelectedNode()));
+                        refreshList();
+                    }
                     break;
                 case "openNetworkParam":
                     NetworkParameters netParamsFrame = new NetworkParameters(node.getNetwork());

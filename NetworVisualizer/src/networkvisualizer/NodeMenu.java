@@ -34,8 +34,8 @@ class NodeMenu extends JPopupMenu {
             moveNetwork.setActionCommand("moveNetwork");
             deleteNode = new JMenuItem("Delete");
             deleteNode.setActionCommand("deleteNode");
-            nodeProperties = new JMenuItem("Properties");
-            nodeProperties.setActionCommand("nodeProperties");       
+            nodeProperties = new JMenuItem("Parameters");
+            nodeProperties.setActionCommand("nodeParameters");       
             moveNode.addActionListener(new MenuListener(event, node));
             moveNetwork.addActionListener(new MenuListener(event, node));
             deleteNode.addActionListener(new MenuListener(event, node));
