@@ -39,6 +39,7 @@ public class CommunicationProtocolList extends JDialog {
         
         model = new CommunicationProtocolListModel();
         table = new JTable(model);
+        table.setDefaultRenderer(Object.class, new NetworkVisualizerTableCellRenderer());
         JScrollPane scrollpane = new JScrollPane(table);
         panel.add(scrollpane);
         

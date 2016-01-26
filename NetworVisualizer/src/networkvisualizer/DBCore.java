@@ -24,7 +24,7 @@ public class DBCore {
     private final String us = "postgres";
     private final String pw = "password";
     private final String dbName = "testDB";
-    private final String dbPort = "5432";//5432 1111
+    private final String dbPort = "1111";//5432 1111
     private final String dbIp = "localhost";//127.0.0.1 localhost
     
     //Temp variable to enable debugging
@@ -716,7 +716,7 @@ public class DBCore {
             String sql = "select u.id_user, u.username, u.type, u.usage from users u, service s, consumedby c where c.service_code = s.code and c.user_id_user = u.id_user and s.code = "+ser.getCOD()+";";
             ResultSet res = stmt.executeQuery(sql);
             while(res.next()) {
-                User us = new User(res.getInt("id_user"), res.getString("username"), res.getString("password"), res.getBoolean("type"));
+                User us = new User(res.getInt("id_user"), res.getString("username"), res.getBoolean("type"));
                 us.setUsage(res.getInt("usage"));
                 output.add(us);
             }

@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -38,6 +39,7 @@ public class NetworkTypeList extends JDialog {
         
         model = new NetworkTypeListModel();
         table = new JTable(model);
+        table.setDefaultRenderer(Object.class, new NetworkVisualizerTableCellRenderer());
         JScrollPane scrollpane = new JScrollPane(table);
         panel.add(scrollpane);
         
@@ -86,7 +88,12 @@ public class NetworkTypeList extends JDialog {
                     int index = table.getSelectedRow();
                     if(index >= 0){
                         NetworkType networkType = NetworkTypeList.this.model.getNetworkTypeList().get(index);
-                        NetworkVisualizer.DB.deleteNetworkType(networkType);
+                        try {
+                            NetworkVisualizer.DB.deleteNetworkType(networkType);
+                        }catch(Exception ex){
+                            JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Error",
+                                JOptionPane.ERROR_MESSAGE);    
+                        }
                         
                     }
                 }

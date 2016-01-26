@@ -38,6 +38,7 @@ public class ServiceList extends JDialog {
         
         model = new ServiceListModel();
         table = new JTable(model);
+        table.setDefaultRenderer(Object.class, new NetworkVisualizerTableCellRenderer());
         JScrollPane scrollpane = new JScrollPane(table);
         panel.add(scrollpane);
         

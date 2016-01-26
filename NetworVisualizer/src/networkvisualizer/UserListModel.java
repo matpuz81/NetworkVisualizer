@@ -23,6 +23,13 @@ public class UserListModel extends AbstractTableModel {
     
     public UserListModel() {
         updateUserList();
+        userList.add(new User(1, "Test", true));
+        userList.add(new User(1, "Test", true));
+        userList.add(new User(1, "Test", true));
+        userList.add(new User(1, "Test", true));
+        userList.add(new User(1, "Test", true));
+        userList.add(new User(1, "Test", true));
+        
     }
     
     public ArrayList<User> getUserList(){
