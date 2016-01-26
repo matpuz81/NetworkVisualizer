@@ -22,9 +22,11 @@ public class UserListModel extends AbstractTableModel {
     private ArrayList<User> userList = new ArrayList<User>();
     
     public UserListModel() {
-        User user = new User(123, "jmondini", true);
-        userList.add(user);
         updateUserList();
+    }
+    
+    public ArrayList<User> getUserList(){
+        return userList;
     }
     
     @Override
@@ -68,6 +70,6 @@ public class UserListModel extends AbstractTableModel {
     }
     
     public void updateUserList() {
-        // Update userlist from DB
+        this.userList = NetworkVisualizer.DB.getAllUser();
     }
 }

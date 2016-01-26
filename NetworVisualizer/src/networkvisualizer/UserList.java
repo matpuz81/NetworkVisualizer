@@ -75,8 +75,8 @@ public class UserList extends JDialog {
             } else if(e.getSource().equals(modifyUser)) {
                 int index = table.getSelectedRow();
                 if(index >= 0){
-                    //GetUser from DB
-                    //CreateModifyUser modify = new CreateModifyUser(//USER);    
+                    User user = UserList.this.model.getUserList().get(index);
+                    CreateModifyUser modify = new CreateModifyUser(user);    
                 }
                 
             } else if(e.getSource().equals(deleteUser)) {
@@ -85,11 +85,12 @@ public class UserList extends JDialog {
                 if(response == JOptionPane.YES_OPTION){
                     int index = table.getSelectedRow();
                     if(index >= 0){
-                        //delete from DB
-                        updateTable();
+                        User user = UserList.this.model.getUserList().get(index);
+                        NetworkVisualizer.DB.deleteUser(user);
                     }
                 }
             }
+            updateTable();
         }
         
     }

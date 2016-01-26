@@ -75,8 +75,8 @@ public class NetworkTypeList extends JDialog {
             } else if(e.getSource().equals(modify)) {
                 int index = table.getSelectedRow();
                 if(index >= 0){
-                    //GetType from DB
-                    //CreateModifyNetworkType modify = new CreateModifyNetworkType(//TYPE);    
+                    NetworkType networkType = NetworkTypeList.this.model.getNetworkTypeList().get(index);
+                    CreateModifyNetworkType modify = new CreateModifyNetworkType(networkType);    
                 }
                 
             } else if(e.getSource().equals(delete)) {
@@ -85,7 +85,8 @@ public class NetworkTypeList extends JDialog {
                 if(response == JOptionPane.YES_OPTION){
                     int index = table.getSelectedRow();
                     if(index >= 0){
-                        //delete from DB
+                        NetworkType networkType = NetworkTypeList.this.model.getNetworkTypeList().get(index);
+                        NetworkVisualizer.DB.deleteNetworkType(networkType);
                         
                     }
                 }

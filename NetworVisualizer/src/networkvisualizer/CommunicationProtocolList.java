@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -75,8 +76,8 @@ public class CommunicationProtocolList extends JDialog {
             } else if(e.getSource().equals(modify)) {
                 int index = table.getSelectedRow();
                 if(index >= 0){
-                    //GetProtocol from DB
-                    //CreateModifyCommunicationProtocol modify = new CreateModifyCommunicationProtocol(//PROTOCOL);    
+                    CommunicationProtocol communicationProtocol = CommunicationProtocolList.this.model.getProtocolList().get(index);
+                    CreateModifyCommunicationProtocol modify = new CreateModifyCommunicationProtocol(communicationProtocol);    
                 }
                 
             } else if(e.getSource().equals(delete)) {
@@ -85,11 +86,17 @@ public class CommunicationProtocolList extends JDialog {
                 if(response == JOptionPane.YES_OPTION){
                     int index = table.getSelectedRow();
                     if(index >= 0){
-                        //delete from DB
-                        updateTable();
+                        CommunicationProtocol communicationProtocol = CommunicationProtocolList.this.model.getProtocolList().get(index);
+                        try {
+                            NetworkVisualizer.DB.deleteCommunicationProtocol(communicationProtocol);
+                        }catch(Exception ex){
+                            JOptionPane.showMessageDialog(new JFrame(), ex.getMessage(), "Error",
+                                JOptionPane.ERROR_MESSAGE);    
+                        }
                     }
                 }
             }
+            updateTable();
         }
         
     }

@@ -26,12 +26,16 @@ public class User {
         this.isAdmin = isAdmin;
     }
     
-    public void setPwHash(int pw) {
-        this.pwHash = pw;
-    }
-    
     public int getPwHash() {
         return this.pwHash;
+    }
+    
+    public void setPwHash(String password) {
+        this.pwHash = (password != null && password.length() > 0) ? password.hashCode() : -1;
+    }
+    
+    public void setPwHash(int pwHash) {
+        this.pwHash = pwHash;
     }
 
     public int getUserID() {

@@ -118,8 +118,7 @@ public class CreateModifyService extends JDialog {
                        newService.setDescription(serviceDescritpion);
                        newService.setCost(serviceCost);
                        newService.setPermission(servicePermission);
-                       
-                       //Insert in DB
+                       NetworkVisualizer.DB.addService(newService);
                     }
                     
                     CreateModifyService.this.setVisible(false);

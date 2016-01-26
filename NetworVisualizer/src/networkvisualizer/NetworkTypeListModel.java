@@ -23,6 +23,10 @@ public class NetworkTypeListModel extends AbstractTableModel {
         updateNetworkTypeList();
     }
     
+    public ArrayList<NetworkType> getNetworkTypeList(){
+        return networkTypeList;
+    }
+    
     @Override
     public int getRowCount() {
         return networkTypeList.size();
@@ -57,6 +61,6 @@ public class NetworkTypeListModel extends AbstractTableModel {
     }
     
     public void updateNetworkTypeList() {
-        // Update userlist from DB
+        this.networkTypeList = NetworkVisualizer.DB.getAllNetworkType();
     }
 }

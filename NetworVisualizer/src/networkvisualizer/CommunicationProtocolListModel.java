@@ -25,6 +25,10 @@ public class CommunicationProtocolListModel extends AbstractTableModel {
         updateProtocolList();
     }
     
+    public ArrayList<CommunicationProtocol> getProtocolList(){
+        return protocolList;
+    }
+    
     @Override
     public int getRowCount() {
         return protocolList.size();
@@ -63,6 +67,6 @@ public class CommunicationProtocolListModel extends AbstractTableModel {
     }
     
     public void updateProtocolList() {
-        // Update servicelist from DB
+        this.protocolList = NetworkVisualizer.DB.getAllCommunicationProtocol();
     }
 }

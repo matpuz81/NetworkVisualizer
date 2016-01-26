@@ -24,6 +24,10 @@ public class ServiceListModel extends AbstractTableModel {
     public ServiceListModel() {
         updateServiceList();
     }
+
+    public ArrayList<Service> getServiceList() {
+        return serviceList;
+    }
     
     @Override
     public int getRowCount() {
@@ -65,6 +69,6 @@ public class ServiceListModel extends AbstractTableModel {
     }
     
     public void updateServiceList() {
-        // Update servicelist from DB
+        this.serviceList = NetworkVisualizer.DB.getAllService();
     }
 }

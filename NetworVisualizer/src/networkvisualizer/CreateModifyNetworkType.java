@@ -78,7 +78,7 @@ public class CreateModifyNetworkType extends JDialog {
                 if(isValid == true){
                     if(CreateModifyNetworkType.this.type == null){
                         NetworkType type = new NetworkType(id, descr);
-                        //Insert in DB
+                        NetworkVisualizer.DB.addNetworkType(type);
                     }else{
                         CreateModifyNetworkType.this.type.setDescription(descr);
                         //Modify in DB

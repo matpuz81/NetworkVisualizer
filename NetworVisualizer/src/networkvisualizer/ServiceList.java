@@ -75,8 +75,8 @@ public class ServiceList extends JDialog {
             } else if(e.getSource().equals(modify)) {
                 int index = table.getSelectedRow();
                 if(index >= 0){
-                    //GetService from DB
-                    //CreateModifyService modify = new CreateModifyService(//Service);    
+                    Service service = ServiceList.this.model.getServiceList().get(index);
+                    CreateModifyService modify = new CreateModifyService(service);    
                 }
                 
             } else if(e.getSource().equals(delete)) {
@@ -85,11 +85,12 @@ public class ServiceList extends JDialog {
                 if(response == JOptionPane.YES_OPTION){
                     int index = table.getSelectedRow();
                     if(index >= 0){
-                        //delete from DB
-                        updateTable();
+                        Service service = ServiceList.this.model.getServiceList().get(index);
+                        //NetworkVisualizer.DB.deleteService(service);
                     }
                 }
             }
+            updateTable();
         }
         
     }

@@ -22,6 +22,7 @@ public class CreateModifyUser extends JDialog {
     
     private TextFieldPanel userID;
     private InputFieldPanel username;
+    private PasswordFieldPanel password;
     private ChoserFieldPanel type;
     private JButton done;
     private User user;
@@ -50,6 +51,9 @@ public class CreateModifyUser extends JDialog {
         }
         panel.add(username);
         
+        password = new PasswordFieldPanel("Password:");
+        panel.add(password);
+        
         type = new ChoserFieldPanel("Type:", VALUES);
         if(user != null) {
             if(user.isIsAdmin()) {
@@ -66,25 +70,38 @@ public class CreateModifyUser extends JDialog {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                String input = username.getFieldText();
-                if(input != null && input.length() > 0){
+                String inputUsername = username.getFieldText();
+                String inputPassword = password.getFieldText();
+                boolean isValid = true;
+                
+                if(inputUsername == null || inputUsername.length() == 0) {
+                    isValid = false;
+                }
+                
+                if(inputPassword == null || inputPassword.length() == 0) {
+                    isValid = false;
+                }
+                
+                if(isValid) {
                     if(CreateModifyUser.this.user == null){
                         User user = new User();
-                        user.setUsername(input);
+                        user.setUsername(inputUsername);
+                        user.setPwHash(inputPassword);
                         if(type.getFieldChoser() == 0){
                             user.setIsAdmin(false);
                         } else {
                             user.setIsAdmin(true);
                         }
-                        //Insert in DB
+                        NetworkVisualizer.DB.addUser(user);
                     }else{
-                        CreateModifyUser.this.user.setUsername(input);
+                        CreateModifyUser.this.user.setUsername(inputUsername);
+                        CreateModifyUser.this.user.setPwHash(inputPassword);
                         if(type.getFieldChoser() == 0){
                             CreateModifyUser.this.user.setIsAdmin(false);
                         } else {
                             CreateModifyUser.this.user.setIsAdmin(true);
                         }
-                        //Modify in DB
+                        NetworkVisualizer.DB.updateUser(CreateModifyUser.this.user);
                     }
                     CreateModifyUser.this.setVisible(false);
                 }else{

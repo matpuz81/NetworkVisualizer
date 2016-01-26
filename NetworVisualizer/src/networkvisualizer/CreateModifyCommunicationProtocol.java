@@ -97,7 +97,7 @@ public class CreateModifyCommunicationProtocol extends JDialog {
                     }else{
                        CommunicationProtocol newProtocol = new CommunicationProtocol(protocolName,
                                protocolLevel, protocolDescritpion);
-                       //Insert in DB
+                       NetworkVisualizer.DB.addCommunicationProtocol(newProtocol);
                     }
                     
                     CreateModifyCommunicationProtocol.this.setVisible(false);
