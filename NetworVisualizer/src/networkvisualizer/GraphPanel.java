@@ -542,7 +542,7 @@ public class GraphPanel extends JPanel {
                         }
                         else return;
                     }
-                    addNodeConnection(selectedNodes.getFirst(),snappedNode,"",1);
+                    addNodeConnection(selectedNodes.getFirst(),snappedNode,"Wired",1);
                     selectedNodes.clear();
                 }
             }
