@@ -292,46 +292,6 @@ public class DBCore {
         }
     }
     
-    public boolean addNetworkConnection(Node node, Network net, String velocety) throws Exception {
-        try {
-            //Look if node is present in db
-            Statement stmt = connection.createStatement();
-            String sql = "select * from node where id_node = "+node.getId()+";";
-            ResultSet res = stmt.executeQuery(sql);
-            if(!res.next()) {
-                throw new Exception("Node not found in DB");
-            }
-            //Test if network is present
-            sql = "select * from network where id_network = "+net.getId()+";";
-            res = stmt.executeQuery(sql);
-            if(!res.next()) {
-                throw new Exception("Network not found in DB");
-            }
-            
-            sql = "insert into networkconnection(node_id, network_id_network, velocety) values("+node.getId()+", "+net.getId()+", '"+velocety+"');";
-            stmt.executeUpdate(sql);
-            
-            stmt.close();
-            return true;
-        } catch (SQLException ex) {
-            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-    }
-    
-    public boolean deleteNetworkConnection(Node node, Network net) {
-        try {
-            Statement stmt = connection.createStatement();
-            String sql = "delete from networkconnection where node_id = "+node.getId()+" AND network_id_network = "+net.getId()+";";
-            stmt.executeUpdate(sql);
-            stmt.close();
-            return true;
-        } catch (SQLException ex) {
-            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }
-    }
-    
     public boolean deleteNodeConnection(Node n1, Node n2) {
          try {
             Statement stmt = connection.createStatement();
@@ -951,18 +911,7 @@ public class DBCore {
                     + "    FOREIGN KEY (Service_code)\n"
                     + "    REFERENCES Service (code)\n"
                     + ");\n"
-                    + " \n"
-                    /*
-                    + "CREATE TABLE IF NOT EXISTS NetworkConnection (\n"
-                    + "  Node_id INT NOT NULL,\n"
-                    + "  Network_id_network INT NOT NULL,\n"
-                    + "  velocety VARCHAR(50),\n"
-                    + "  PRIMARY KEY (Node_id, Network_id_network),\n"
-                    + "    FOREIGN KEY (Node_id)\n"
-                    + "    REFERENCES Node(id_node),\n"
-                    + "    FOREIGN KEY (Network_id_network)\n"
-                    + "    REFERENCES Network(id_network)\n"
-                    + ");";*/;
+                    + " \n";
             stmt.executeUpdate(sql);
             stmt.close();
 
