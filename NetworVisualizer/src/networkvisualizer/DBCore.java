@@ -143,6 +143,20 @@ public class DBCore {
         
     }
     
+    public boolean updateNetworkType(NetworkType nt) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "update networktype set description = '"+nt.getDescription()+"' where id_net_type = '"+nt.getId()+"';";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+    }
+    
     
     public int addCommunicationProtocol(CommunicationProtocol comProt) {
         try {
@@ -178,7 +192,20 @@ public class DBCore {
             return false;
         }
     }
-/*    
+    
+    public boolean updateCommunicationProtocol(CommunicationProtocol cp) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "update comunicationprotocol set name = '"+cp.getName()+"', level = "+cp.getLevel()+", description = '"+cp.getDescription()+"' where protocol_id = "+cp.getId()+";";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+   
     public ArrayList<CommunicationProtocol> getAllComunicationProtocol() {
         try {
             Statement stmt = connection.createStatement();
@@ -197,7 +224,7 @@ public class DBCore {
         
     }
     
-
+/*
     public boolean addNetworkTopology(NetworkTopology netTop) {
         try {
             Statement stmt = connection.createStatement();
@@ -767,6 +794,40 @@ public class DBCore {
         } catch (SQLException ex) {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
             return -1;
+        }
+    }
+    
+    public boolean updateService(Service ser) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "update service set description = '"+ser.getDescription()+"', service = '"+ser.getService()+"', permission = '"+ser.getPermission()+"', cost = "+ser.getCost()+" where code = "+ser.getCOD()+";";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+    }
+    
+    public boolean deleteServcie(Service ser) throws Exception {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "select * from offers where service_code = "+ser.getCOD()+";";
+            ResultSet res = stmt.executeQuery(sql);
+            if(res.next()) {
+                throw new Exception("This Service is still linked to offers");
+            }
+            
+            sql = "delete from service where code = "+ser.getCOD()+";";
+            stmt.executeUpdate(sql);
+            
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
     
