@@ -438,7 +438,7 @@ public class DBCore {
             sql = "Select * from nodeconnection;";
             res = stmt.executeQuery(sql);
             while(res.next()) {
-                NetworkVisualizer.panel.connectNodesById(res.getInt("id1"), res.getInt("id2"),"",1);
+                NetworkVisualizer.panel.connectNodesById(res.getInt("id1"), res.getInt("id2"),res.getString("type"),res.getDouble("velocity"));
             }
             stmt.close();
             
