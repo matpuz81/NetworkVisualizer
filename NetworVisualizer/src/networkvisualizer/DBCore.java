@@ -224,22 +224,6 @@ public class DBCore {
         
     }
     
-/*
-    public boolean addNetworkTopology(NetworkTopology netTop) {
-        try {
-            Statement stmt = connection.createStatement();
-            String sql = "insert into networktopology(name, structure) values('"+netTop.getName()+"', '"+netTop.getStructure()+"');";
-            stmt.executeUpdate(sql);
-            stmt.close();
-            return true;
-        } catch (SQLException ex) {
-            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
-            return false;
-        }   
-    }
-    */
-    
-    
     
     public ArrayList<Network> getAllNetwork() {
         try {
