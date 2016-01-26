@@ -358,6 +358,20 @@ public class DBCore {
         }
     }
     
+    public boolean updateNodeConnection(NodeConnection nc) {
+        try {
+            Statement stmt = connection.createStatement();
+            String sql = "update nodeconnection set type = '"+nc.getType()+"', velocity = "+nc.getVelocity()+" where id1 = "+getSmaller(nc.n1.getId(), nc.n2.getId())+" and id2 = "+getBigger(nc.n1.getId(), nc.n2.getId())+";";
+            stmt.executeUpdate(sql);
+            stmt.close();
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+        
+    }
+    
     //This method takes a Node object and add its into the DB
     public int addNode(Node n) {
         try {
@@ -917,6 +931,8 @@ public class DBCore {
                     + "CREATE TABLE IF NOT EXISTS NodeConnection (\n"
                     + "  id1 INT NOT NULL,\n"
                     + "  id2 INT NOT NULL,\n"
+                    + "  type VARCHAR(20) NULL,\n"
+                    + "  velocity REAL NULL,\n"
                     + "  PRIMARY KEY (id1, id2),\n"
                     + "   \n"
                     + "    FOREIGN KEY (id1)\n"
