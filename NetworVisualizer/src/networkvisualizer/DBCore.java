@@ -24,7 +24,7 @@ public class DBCore {
     private final String us = "postgres";
     private final String pw = "password";
     private final String dbName = "testDB";
-    private final String dbPort = "1111";//5432 1111
+    private final String dbPort = "5432";//5432 1111
     private final String dbIp = "localhost";//127.0.0.1 localhost
     
     //Temp variable to enable debugging
@@ -43,7 +43,6 @@ public class DBCore {
         }
         System.out.println("Opened database successfully");
         System.out.println(createDbStructure());
-        System.out.println("!!!!!!!!!!!!!!!!DB should be resetet!!!!!!!!!!");
         //System.out.println(this.cleanDb());
         
         //Insert some defoult data if not exist
@@ -567,6 +566,13 @@ public class DBCore {
                 us = new User(res.getInt("id_user"), res.getString("username"), res.getBoolean("type"));
                 us.setUsage(res.getInt("usage"));
                 us.setPwHash(res.getInt("pwhash"));
+            }
+            
+            sql = "select * from users";
+            res = stmt.executeQuery(sql);
+            if(!res.next()) {
+                System.out.println("New user addet because it is the first one");
+                
             }
             
             stmt.close();
