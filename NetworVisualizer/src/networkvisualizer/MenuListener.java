@@ -31,12 +31,11 @@ class MenuListener implements ActionListener{
         switch (e.getActionCommand()) {
             case "moveNetwork":
                 parent.selectedNodes.clear();
-                for(Node n:node.getNetwork().getNodes())
-                {
+                for(Node n:node.getNetwork().getNodes()) {
                     parent.selectedNodes.add(n);
                 }
             case "moveNode":
-                parent.mouseStartPolar = Polar.getPolar(parent.getCenter(), mouse.getPoint(),parent.zoom);
+                parent.mouseStartPolar = Polar.getPolar(parent.getCenter(), mouse.getPoint(),parent.getZoom());
                 parent.moveSelected=true;
                 break;
             case "addNode":
@@ -49,7 +48,7 @@ class MenuListener implements ActionListener{
                 if(i==0)
                     parent.deleteNode(node);
                 break;
-            case "nodeProperties":
+            case "nodeParameters":
                 parent.selectedNodes.clear();
                 NodeParameters paramsFrame = new NodeParameters(node);
                 paramsFrame.setVisible(true);

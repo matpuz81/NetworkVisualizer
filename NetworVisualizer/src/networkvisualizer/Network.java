@@ -128,7 +128,6 @@ public class Network {
         return 1;
     }
     
-    
     public Color getColor()
     {
         return color;
