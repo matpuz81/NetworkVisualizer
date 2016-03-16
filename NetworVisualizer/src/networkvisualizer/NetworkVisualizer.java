@@ -32,6 +32,7 @@ public class NetworkVisualizer {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+
         JFrame frame = new JFrame();
         frame.setJMenuBar(buildMenu());
         JPanel mainPanel = new JPanel();

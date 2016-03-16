@@ -79,6 +79,7 @@ public class CommunicationProtocolList extends JDialog {
                 if(index >= 0){
                     CommunicationProtocol communicationProtocol = CommunicationProtocolList.this.model.getProtocolList().get(index);
                     CreateModifyCommunicationProtocol modify = new CreateModifyCommunicationProtocol(communicationProtocol);    
+                    NetworkVisualizer.DB.updateCommunicationProtocol(communicationProtocol);
                 }
                 
             } else if(e.getSource().equals(delete)) {

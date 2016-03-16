@@ -55,22 +55,6 @@ public class DBCore {
         
     }
     
-    public ArrayList<CommunicationProtocol> getAllCommunicationProtocol() {
-        try {
-            Statement stmt = connection.createStatement();
-            String sql = "select * from comunicationprotocol;";
-            ResultSet res = stmt.executeQuery(sql);
-            ArrayList<CommunicationProtocol> output = new ArrayList<CommunicationProtocol>();
-            while(res.next())  {
-                output.add(new CommunicationProtocol(res.getInt("protocol_id"), res.getString("name"), res.getInt("level"), res.getString("description")));
-            }
-            stmt.close();
-            return output;
-        } catch (SQLException ex) {
-            Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
 /*    
     public ArrayList<NetworkTopology> getAllNetworkTopology() {
         try {
@@ -205,7 +189,7 @@ public class DBCore {
         }
     }
    
-    public ArrayList<CommunicationProtocol> getAllComunicationProtocol() {
+    public ArrayList<CommunicationProtocol> getAllCommunicationProtocol() {
         try {
             Statement stmt = connection.createStatement();
             String sql = "select * from comunicationprotocol;";
@@ -220,9 +204,7 @@ public class DBCore {
             Logger.getLogger(DBCore.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
-        
     }
-    
     
     public ArrayList<Network> getAllNetwork() {
         try {

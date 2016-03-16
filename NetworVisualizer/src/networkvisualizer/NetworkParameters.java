@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -50,25 +51,27 @@ public class NetworkParameters extends JFrame {
     LinkedList<Node> nodesToRemove = new LinkedList();
     JSlider colorSlider;
     JButton cancelButton, saveButton, colorButton;
-    JLabel nameInputLabel, colorLabel, topologyLabel;
+    JLabel nameInputLabel, colorLabel, topologyLabel, networkTypeLabel, comProtoLabel;
     JTextArea descriptionInput;
     JTextField nameInput;
+    JComboBox networkTypeInput, comProtoInput;
     
     public NetworkParameters(Network net)
     {
         this.parentPanel=NetworkVisualizer.panel;
         this.net=net;
         this.setTitle("Parameters - " + net.getName() + " - id:" + net.getId());
-        
+        //this.setPreferredSize(new Dimension());
         mainPanel.setLayout(new BorderLayout());
         leftPanel.setLayout(new GridLayout(2,1));
-        parameterPanel.setLayout(new GridLayout(3,2,10,0));
-        parameterPanel.setPreferredSize(new Dimension(500,100));
+        parameterPanel.setLayout(new GridLayout(4,2,10,0));
+        parameterPanel.setPreferredSize(new Dimension(500,150));
         
         nameInputLabel = new JLabel("Label:");
         colorLabel = new JLabel("Color:");
         nameInput = new JTextField(20);
         nameInput.setText(net.getName());
+        
         topologyLabel = new JLabel(net.getNet_topology());
         colorButton = new JButton();
         colorButton.setPreferredSize(new Dimension(25,25));
@@ -76,6 +79,23 @@ public class NetworkParameters extends JFrame {
         colorButton.setBackground(net.getColor());
         colorButton.setActionCommand("openColorPopup");
         colorButton.addActionListener(new NetworkParametersListener());
+        
+        comProtoInput = new JComboBox();
+        for(CommunicationProtocol p : NetworkVisualizer.DB.getAllCommunicationProtocol())
+        {
+            comProtoInput.addItem(p.getName());
+        }
+        
+        comProtoInput.setSelectedIndex(net.getNet_com_protocol()-1);
+
+        networkTypeInput = new JComboBox();
+        for(NetworkType t : NetworkVisualizer.DB.getAllNetworkType())
+        {
+            networkTypeInput.addItem(t.getId());
+        }
+        networkTypeInput.setSelectedItem(net.getNet_type_id());
+        
+        System.out.println(net.getNet_com_protocol()); 
 
         descriptionInput = new JTextArea(5,20);
         descriptionInput.setText(net.getDescription());
@@ -106,6 +126,10 @@ public class NetworkParameters extends JFrame {
         colorTopologyPanel.add(colorButtonPanel);
         colorTopologyPanel.add(topologyLabel);
         parameterPanel.add(colorTopologyPanel);
+        
+        parameterPanel.add(comProtoInput);
+        parameterPanel.add(networkTypeInput);
+        parameterPanel.add(new JLabel("Description:"));
         leftPanel.add(parameterPanel);
         leftPanel.add(descriptionInput);
         centerPanel.add(leftPanel);
@@ -159,7 +183,7 @@ public class NetworkParameters extends JFrame {
     
     void save() {
         
-        net.setParams(nameInput.getText(), descriptionInput.getText(), "LAN", 1);
+        net.setParams(nameInput.getText(), descriptionInput.getText(), networkTypeInput.getSelectedItem().toString(), comProtoInput.getSelectedIndex()+1);
         net.setColor(colorButton.getBackground());
         
         NetworkVisualizer.DB.updateNetwork(net);

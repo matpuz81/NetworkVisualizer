@@ -30,7 +30,7 @@ public class UserList extends JDialog {
     
     public UserList() {
         this.setTitle("User List");
-        this.setSize(500,520);
+        this.setSize(500,600);
         this.setModal(true);
         
         UserListener listener = new UserListener();

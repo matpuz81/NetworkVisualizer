@@ -62,7 +62,8 @@ public class Login extends JDialog {
                 if(isValid){
                     //Check if user exists
                     if(true) { //user exists
-                        //set as current user and go to next window
+                        
+                        
                     } else {
                         JOptionPane.showMessageDialog(new JFrame(), "Please, rewrite access data", "Error",
                         JOptionPane.ERROR_MESSAGE);

@@ -78,7 +78,8 @@ public class NetworkTypeList extends JDialog {
                 int index = table.getSelectedRow();
                 if(index >= 0){
                     NetworkType networkType = NetworkTypeList.this.model.getNetworkTypeList().get(index);
-                    CreateModifyNetworkType modify = new CreateModifyNetworkType(networkType);    
+                    CreateModifyNetworkType modify = new CreateModifyNetworkType(networkType);   
+                    NetworkVisualizer.DB.updateNetworkType(networkType);
                 }
                 
             } else if(e.getSource().equals(delete)) {

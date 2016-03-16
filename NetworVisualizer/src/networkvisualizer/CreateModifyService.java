@@ -35,7 +35,7 @@ public class CreateModifyService extends JDialog {
         } else {
             this.setTitle("Modify Service");
         }
-        this.setSize(300,500);
+        this.setSize(300,600);
         this.setModal(true);
         
         JPanel panel = new JPanel();

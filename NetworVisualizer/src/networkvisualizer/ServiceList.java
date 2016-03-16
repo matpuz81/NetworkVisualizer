@@ -9,6 +9,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
@@ -78,6 +80,8 @@ public class ServiceList extends JDialog {
                 if(index >= 0){
                     Service service = ServiceList.this.model.getServiceList().get(index);
                     CreateModifyService modify = new CreateModifyService(service);    
+                    
+                    NetworkVisualizer.DB.updateService(service);
                 }
                 
             } else if(e.getSource().equals(delete)) {
@@ -86,8 +90,12 @@ public class ServiceList extends JDialog {
                 if(response == JOptionPane.YES_OPTION){
                     int index = table.getSelectedRow();
                     if(index >= 0){
-                        Service service = ServiceList.this.model.getServiceList().get(index);
-                        //NetworkVisualizer.DB.deleteService(service);
+                        try {
+                            Service service = ServiceList.this.model.getServiceList().get(index);
+                            NetworkVisualizer.DB.deleteServcie(service);
+                        } catch (Exception ex) {
+                            Logger.getLogger(ServiceList.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 }
             }
